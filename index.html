@@ -1,0 +1,2072 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mizrapp</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1A2229">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2222.5%22%20fill%3D%22%231A2229%22/%3E%3Cpath%20d%3D%22M22%2012Q50%206%2078%2012Q94%2014%2088%2028Q76%2058%2058%2085Q50%2097%2042%2085Q24%2058%2012%2028Q6%2014%2022%2012Z%20M60%2034a10%2010%200%201%200%20-20%200a10%2010%200%201%200%2020%200Z%22%20fill-rule%3D%22evenodd%22%20fill%3D%22%23D39A22%22%20transform%3D%22translate%2850%2050%29%20scale%280.66%29%20translate%28-50%20-50%29%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF1F2;--surface:#FFFFFF;--ink:#1A2229;--muted:#5B6870;--line:#D3DADE;
+  --sel:#1A2229;--selInk:#FFFFFF;
+  --root:#D39A22;--third:#2E8C8F;--fifth:#4E6FA8;--seventh:#A3517E;--ext:#6E8A2E;
+  --board:#3A2318;--fret:#B9C0C5;--string:#E3DCCB;--bone:#EFE6D2;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]):not([data-theme="sepia"]){--bg:#12171B;--surface:#1A2127;--ink:#E5EAED;--muted:#93A0A8;--line:#2B353C;--sel:#E5EAED;--selInk:#12171B;}
+}
+:root[data-theme="dark"]{--bg:#12171B;--surface:#1A2127;--ink:#E5EAED;--muted:#93A0A8;--line:#2B353C;--sel:#E5EAED;--selInk:#12171B;}
+:root[data-theme="sepia"]{--bg:#EFE4CE;--surface:#F8F0DF;--ink:#3A2C1E;--muted:#7A6650;--line:#D6C3A1;--sel:#3A2C1E;--selInk:#F8F0DF;--root:#B9831A;--third:#2F7A73;--fifth:#4A5F93;--seventh:#94456F;--ext:#647A2A;}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:560px;margin:0 auto;padding:18px 16px 48px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--root);outline-offset:2px}
+
+.head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
+.hl{min-width:0}
+.topbar{flex-wrap:wrap}
+.ticon span{font-size:12.5px}
+.tpill.alt{border-color:var(--root)}
+.tnote{font-size:13.5px;color:var(--root);margin:0 0 8px}
+.tlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:8px}
+.tcard{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 11px;display:flex;flex-direction:column;gap:2px}
+.tcard b{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:16px}
+.tcard span{font-weight:700;letter-spacing:.06em;color:var(--muted);font-size:13.5px}
+.tcard small{font-size:12px;color:var(--muted);line-height:1.35}
+.tcard[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.capo{min-width:110px;text-align:center;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:20px}
+td.easy{color:var(--third);font-weight:700}
+.slots{display:grid;gap:5px;margin-top:4px}
+.slot{border:1px solid var(--line);border-radius:7px;background:var(--bg);display:flex;flex-direction:column;align-items:center;padding:6px 0 4px;line-height:1.1}
+.slot.bt{border-color:var(--muted)}
+.slot b{font-size:24px;min-height:28px;font-family:'Bricolage Grotesque',system-ui,sans-serif}
+.slot small{font-size:12px;color:var(--muted)}
+.slot.lit{background:var(--sel);color:var(--selInk);border-color:var(--sel)}
+.slot.lit small{color:inherit}
+.shgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.shcard svg{display:block;margin:4px auto}
+.rguide{display:flex;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.rguide>b{font-size:13.5px;min-width:78px}
+.rguide>div{display:flex;flex-wrap:wrap;gap:4px}
+.rguide span{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:2px 7px;font-weight:700;font-size:14px;display:flex;flex-direction:column;align-items:center;line-height:1.1;min-width:30px}
+.rguide span small{font-weight:400;color:var(--muted);font-size:10.5px}
+.rguide span.on{background:var(--root);border-color:var(--root);color:#2A1C05}
+.rguide span.on small{color:#2A1C05}
+.shtable{display:flex;flex-direction:column;gap:6px}
+.shrow{display:grid;grid-template-columns:62px repeat(3,1fr);gap:4px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:6px}
+.shname{display:flex;flex-direction:column;line-height:1.2}
+.shname b{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:16px}
+.shname small{font-size:10.5px;color:var(--muted)}
+.shcell{text-align:center;cursor:pointer;min-width:0}
+.shcell svg{max-width:100%;height:auto;display:block;margin:0 auto}
+.shcell small{font-size:10.5px;color:var(--muted)}
+.empty-c{cursor:default;opacity:.6}
+@media (max-width:440px){.ticon span{display:none}.ticon{padding:7px 9px}.topbar{gap:6px}.bword{display:none}.brand{margin-right:0}.topbar{justify-content:flex-start}.tool{padding:7px 11px;font-size:13.5px}}
+.finder{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+.fboard{flex-shrink:0;margin:0 auto}
+.fres{flex:1 1 220px}
+.frbig{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:52px;line-height:1}
+.topbar{display:flex;align-items:center;gap:8px;margin:-4px 0 12px}
+.brand{display:inline-flex;align-items:center;gap:8px;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:19px;letter-spacing:-.03em;color:var(--ink);margin-right:auto}
+.logo{width:34px;height:34px;flex-shrink:0;display:block}
+:root[data-theme="dark"] .logo rect{stroke:#2B353C;stroke-width:3}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]):not([data-theme="sepia"]) .logo rect{stroke:#2B353C;stroke-width:3}}
+.dbrand{display:inline-flex;align-items:center;gap:10px}
+.dbrand .logo{width:38px;height:38px}
+.tool{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-weight:700;font-size:14px}
+.tool svg{width:17px;height:17px}
+.tool.on{background:var(--sel);color:var(--selInk);border-color:var(--sel)}
+@media (max-width:380px){.tool{padding:7px 8px;font-size:13px;gap:4px}.topbar .logo{width:30px;height:30px}.topbar{gap:5px}}
+.tool.alt{border-color:var(--root);box-shadow:inset 0 0 0 1px var(--root)}
+.hero{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 6px 6px;text-align:center;flex-shrink:0}
+.herod svg{display:block;margin:0 auto}
+.heronav{display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;color:var(--muted);margin-top:2px}
+.herotab{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:15px;letter-spacing:.06em;margin-top:2px}
+.sym{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:clamp(56px,17vw,84px);line-height:.9;letter-spacing:-.03em;margin:0}
+.trname{color:var(--muted);margin:6px 0 2px;font-size:17px}
+.formula{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:500;font-size:15px;color:var(--muted)}
+.play{border:0;background:var(--sel);color:var(--selInk);border-radius:999px;padding:12px 20px;font-weight:700;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.play svg{width:16px;height:16px}
+
+.tones{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin:16px 0 22px}
+.tone{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:6px;padding:8px 10px;display:flex;flex-direction:column}
+.tn{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:24px;line-height:1.1}
+.ti{font-weight:700;color:var(--c);font-size:14px}
+.tname{font-size:12.5px;color:var(--muted);line-height:1.3}
+
+.pick-label{font-size:13.5px;color:var(--muted);margin:0 0 6px}
+.roots{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:14px}
+.roots button{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 0 5px;display:flex;flex-direction:column;align-items:center;line-height:1.15}
+.roots button b{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:19px}
+.roots button small{font-size:11px;color:var(--muted)}
+.roots button[aria-pressed="true"]{background:var(--sel);color:var(--selInk);border-color:var(--sel)}
+.roots button[aria-pressed="true"] small{color:inherit;opacity:.75}
+.types{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px}
+.types button{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 13px;font-weight:700;font-size:15px}
+.types button[aria-pressed="true"]{background:var(--sel);color:var(--selInk);border-color:var(--sel)}
+
+#tabTop{scroll-margin-top:72px;height:0}
+.navlogo .logo{width:36px;height:36px}
+.topbar{justify-content:flex-start}
+.ticon{margin-left:auto}
+.navbar{display:flex;align-items:center;gap:10px;margin:-18px -16px 12px;padding:8px 16px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:3;border-bottom:2px solid var(--line)}
+.menubtn{display:inline-flex;align-items:center;gap:8px;background:var(--sel);color:var(--selInk);border:0;border-radius:999px;padding:9px 16px 9px 12px;font-weight:700;font-size:15px;flex-shrink:0}
+.menubtn svg{width:20px;height:20px}
+.navcur{display:flex;flex-direction:column;line-height:1.15;min-width:0;flex:1}
+.navcur small{color:var(--muted);font-size:12px}
+.navcur .nname{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:21px;letter-spacing:-.035em;line-height:1.05}
+.navcur small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.navwarn{display:inline-flex;align-items:center;gap:5px;border:0;background:var(--root);color:#2A1C05;border-radius:999px;padding:7px 11px;font-weight:700;font-size:13px;flex-shrink:0;white-space:nowrap}
+.navwarn svg{width:17px;height:17px}
+.navcur{overflow:hidden}
+@media (max-width:440px){.navwarn span{display:none}.navwarn{padding:8px}}
+.tbanner{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;background:color-mix(in srgb,var(--root) 18%,var(--surface));border:1px solid var(--root);border-radius:10px;padding:10px 12px;margin:0 0 14px;font-size:14.5px}
+.tbanner svg{width:20px;height:20px;color:var(--root);flex-shrink:0}
+.tbanner span{flex:1 1 200px}
+.tbanner button{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-weight:700;font-size:13.5px}
+.drawer-bg{position:fixed;inset:0;background:rgba(10,14,17,.45);z-index:20;opacity:0;pointer-events:none;transition:opacity .2s}
+.drawer{position:fixed;top:0;bottom:0;right:0;width:min(320px,86vw);background:var(--surface);z-index:21;transform:translateX(102%);transition:transform .25s ease;display:flex;flex-direction:column;box-shadow:-4px 0 24px rgba(0,0,0,.18);padding-top:env(safe-area-inset-top,0px)}
+body.dopen .drawer{transform:none}
+body.dopen .drawer-bg{opacity:1;pointer-events:auto}
+@media (prefers-reduced-motion:reduce){.drawer,.drawer-bg{transition:none}}
+.dhead{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid var(--line)}
+.dhead b{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:22px}
+.dclose{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:none;font-size:22px;line-height:1}
+.dbody{overflow-y:auto;padding:8px 8px 24px;flex:1}
+.dgroup{border-bottom:1px solid var(--line)}
+.dgbtn{width:100%;display:flex;align-items:center;justify-content:space-between;background:none;border:0;padding:14px 10px;font-weight:700;font-size:16px;text-align:left}
+.dgbtn small{display:block;font-weight:400;color:var(--muted);font-size:12.5px}
+.dgbtn i{font-style:normal;color:var(--muted);transition:transform .2s;font-size:14px}
+.dgroup.open .dgbtn i{transform:rotate(90deg)}
+.ditems{display:none;padding:0 0 10px 6px}
+.dgroup.open .ditems{display:block}
+.ditems button{display:block;width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:10px 12px;font-size:15.5px}
+.ditems button[aria-current="page"]{background:var(--sel);color:var(--selInk);font-weight:700}
+.rem-bg{position:fixed;inset:0;background:rgba(10,14,17,.5);z-index:30;display:none;align-items:center;justify-content:center;padding:16px}
+.rem-bg.on{display:flex}
+.rem{background:var(--surface);color:var(--ink);border-radius:14px;max-width:380px;width:100%;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.rem h2{font-family:'Bricolage Grotesque',system-ui,sans-serif;margin:0 0 8px;font-size:22px}
+.rem p{margin:0 0 12px;font-size:15px;line-height:1.5}
+.rem .rbtns{display:flex;flex-direction:column;gap:8px}
+.rem .rbtns button{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:11px 12px;font-weight:700;font-size:15px;text-align:left}
+.rem .rbtns button.prim{background:var(--sel);color:var(--selInk);border-color:var(--sel)}
+.rem .rbtns button[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.rem .rbtns button[aria-pressed="true"]::after{content:" (seçili)";font-weight:400;color:var(--muted)}
+
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:none;padding:6px 12px;font-size:14px}
+.seg button[aria-pressed="true"]{background:var(--sel);color:var(--selInk)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:14px}
+.chips button[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);font-weight:700}
+
+.stage{display:flex;align-items:center;justify-content:center;gap:6px;margin:10px 0 6px}
+.nav{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:26px;line-height:1;display:grid;place-items:center;flex-shrink:0}
+.nav:disabled{opacity:.35}
+svg text{font-family:'Atkinson Hyperlegible',system-ui,sans-serif}
+.count{text-align:center;color:var(--muted);font-size:14px;margin-bottom:10px}
+.info{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.info p{margin:0 0 4px}
+.info p:last-child{margin:0}
+.tabline{display:grid;grid-template-columns:auto repeat(6,1fr);gap:2px 0;text-align:center;margin:10px 0 2px;font-variant-numeric:tabular-nums}
+.tabline span{padding:2px 0}
+.tabline .h{color:var(--muted);font-size:13px}
+.tabline .f{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:20px}
+.tabline .lbl{text-align:left;padding-right:10px;color:var(--muted);font-size:13px}
+
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted);margin:14px 0 0}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:50%;background:var(--c);display:inline-block}
+
+.neck{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;margin:0 -16px;padding:0 16px}
+.hint{color:var(--muted);font-size:14.5px;margin:10px 0 0;max-width:62ch}
+.caged{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.cg{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 6px 8px;text-align:center}
+.cg h3{font-family:'Bricolage Grotesque',system-ui,sans-serif;margin:0;font-size:18px}
+.cg p{margin:0 0 6px;font-size:13px;color:var(--muted)}
+.cg button.mini{border:1px solid var(--line);background:none;border-radius:999px;padding:3px 12px;font-size:13px;margin-top:4px}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:8px;padding:16px;color:var(--muted)}
+
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:13px;color:var(--muted);font-weight:400}
+tbody tr{cursor:pointer}
+tbody tr[aria-current="true"]{background:var(--surface)}
+td.s{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:17px}
+@media (prefers-reduced-motion:no-preference){.dot{transition:opacity .15s}}
+.sub{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:26px;margin:4px 0 2px;letter-spacing:-.01em}
+.mini-tones{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 14px}
+.mini-tones span{border:1px solid var(--line);border-left:4px solid var(--c);background:var(--surface);border-radius:5px;padding:2px 9px;font-weight:700}
+.mini-tones small{color:var(--c);margin-left:5px}
+.boxview{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-top:14px}
+.boxview .info{flex:1 1 180px}
+.link{background:none;border:0;padding:0;color:var(--ink);text-decoration:underline;text-underline-offset:3px;font-weight:700}
+.cof{display:flex;justify-content:center;margin:4px 0 8px}
+.cof svg{max-width:100%;height:auto}
+.dia{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:6px;margin:10px 0 12px}
+.dia button{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 2px;display:flex;flex-direction:column;align-items:center;line-height:1.2}
+.dia button small{color:var(--muted);font-size:12px}
+.dia button b{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:18px}
+.dia button[aria-pressed="true"]{background:var(--sel);color:var(--selInk);border-color:var(--sel)}
+.dia button[aria-pressed="true"] small{color:inherit;opacity:.75}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.ghost{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-weight:700;font-size:14.5px}
+.tempo{display:flex;align-items:center;gap:12px;margin:4px 0 8px}
+.bpmwrap{flex:1;text-align:center}
+.bpmnum{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:48px;line-height:1}
+.bpmnum small{font-size:15px;font-weight:500;color:var(--muted)}
+input[type=range]{width:100%;accent-color:var(--root);margin-top:8px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin-top:16px}
+.cardhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.cardhead .sub{margin:0}
+.beats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.beats span{width:36px;height:36px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-weight:700;color:var(--muted)}
+.beats span.acc{border-color:var(--root)}
+.beats span.acc2{border-color:var(--third)}
+.beats span.lit{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.beats span.acc.lit{background:var(--root);border-color:var(--root);color:#2A1C05}
+.grid-wrap{overflow-x:auto}
+.dgrid{display:grid;gap:3px;align-items:center;min-width:300px}
+.dgrid .tl{font-size:12.5px;color:var(--muted);white-space:nowrap}
+.dgrid i{height:22px;border-radius:3px;background:var(--bg);display:block}
+.dgrid i.bt{box-shadow:inset 0 0 0 1px var(--line)}
+.dgrid i.on{background:var(--ink)}
+.dgrid i.soft{background:var(--muted);opacity:.55}
+.dgrid i.lit{outline:2px solid var(--root);outline-offset:0}
+.tbar{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--surface);border-top:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+.tbar span{flex:1;font-size:14.5px}
+.tbar .ghost{padding:6px 12px}
+.tbar .play{padding:9px 16px}
+body:has(.tbar) .wrap{padding-bottom:110px}
+.famous .fhead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.famous .sub{margin:0}
+.who{margin:2px 0 0;color:var(--muted);font-size:14px}
+.fsym{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:28px;white-space:nowrap}
+.fbody{display:flex;gap:12px;align-items:flex-start;margin-top:10px}
+.fbody svg{flex-shrink:0}
+.fd{margin:0;font-size:14.5px;line-height:1.5}
+.ivlist{display:flex;flex-direction:column;gap:6px}
+.ivrow{display:flex;align-items:center;gap:12px;text-align:left;background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:6px;padding:8px 12px}
+.ivn{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:22px;width:28px;text-align:center;color:var(--c);flex-shrink:0}
+.ivm{flex:1;line-height:1.35}
+.ivm small{color:var(--muted)}
+.ivalt{font-size:12.5px;color:var(--muted)}
+.ivnote{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:22px;flex-shrink:0}
+.quiz{text-align:center;margin:12px 0 6px}
+.qnote{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:64px;line-height:1}
+.qtxt{color:var(--muted)}
+.jgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.jbar{border:1px solid var(--line);border-radius:6px;padding:6px 8px;background:var(--bg);display:flex;flex-direction:column;line-height:1.2}
+.jbar small{color:var(--muted);font-size:11px}
+.jbar b{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:18px}
+.jbar span{color:var(--muted);font-size:12.5px}
+.jbar.lit{background:var(--sel);color:var(--selInk);border-color:var(--sel)}
+.jbar.lit small,.jbar.lit span{color:inherit;opacity:.75}
+.jnow{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:30px;margin-right:auto}
+.jrn{font-size:16px;color:var(--root);margin-right:6px;font-weight:700}
+[data-midi]{transform-box:fill-box;transform-origin:center}
+.pulse{animation:beat .55s cubic-bezier(.3,1.5,.5,1)}
+@keyframes beat{0%{transform:scale(1)}30%{transform:scale(1.42)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.pulse{animation:flash .45s}@keyframes flash{50%{opacity:.45}}}
+.steps{margin:8px 0 10px;padding-left:22px}
+.steps li{margin-bottom:6px;font-size:14.5px;line-height:1.5}
+.mrow{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.mrow label{font-weight:700;font-size:14.5px}
+.mfield{display:flex;align-items:center;gap:6px}
+.mfield input,.tin{width:96px;font:inherit;font-size:16px;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.tin{width:auto;flex:1;min-width:160px}
+.mfield span{color:var(--muted);font-size:13px}
+.conv{grid-column:1/-1;font-size:12.5px;color:var(--muted)}
+.ev{grid-column:1/-1;font-size:14px;line-height:1.45}
+.bd{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;margin-right:4px;color:#fff}
+.bd.ok{background:var(--third)}.bd.hi{background:var(--seventh)}.bd.lo{background:var(--fifth)}
+.puhead{display:flex;justify-content:space-between;align-items:center;margin-top:14px;gap:8px;flex-wrap:wrap}
+.a4{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
+.nav.sm{width:30px;height:30px;font-size:18px}
+.tuner{text-align:center}
+.tuner.intune{box-shadow:inset 0 0 0 2px var(--third)}
+.tunote{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:72px;line-height:1;margin-top:-6px}
+.tunote sub{font-size:22px;color:var(--muted);font-weight:500;margin-left:2px}
+.tmeta{display:flex;justify-content:center;gap:18px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:4px}
+.thint{font-weight:700;margin-top:6px;min-height:1.5em}
+.tlvl{height:4px;background:var(--line);border-radius:2px;margin:10px auto 0;max-width:240px;overflow:hidden}
+.tlvl i{display:block;height:100%;width:0;background:var(--third);transition:width .1s}
+.tstrs{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:14px}
+.tstrs button{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 0;display:flex;flex-direction:column;align-items:center;line-height:1.15}
+.tstrs button b{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:20px}
+.tstrs button small{font-size:11px;color:var(--muted)}
+.tstrs button.on{background:var(--sel);color:var(--selInk);border-color:var(--sel)}
+.tstrs button.on small{color:inherit}
+.tinto{margin-top:12px;font-size:14.5px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center}
+.terr{color:var(--seventh);font-size:14px;margin:12px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div class="drawer-bg" id="drawerBg"></div>
+<nav class="drawer" id="drawer" aria-label="Bölümler" aria-hidden="true"></nav>
+<div class="rem-bg" id="remBg"><div class="rem" role="alertdialog" aria-modal="true" aria-labelledby="remT" id="rem"></div></div>
+<script>
+const LETTERS=['C','D','E','F','G','A','B'];
+const LETTER_PC=[0,2,4,5,7,9,11];
+const SOLF=['Do','Re','Mi','Fa','Sol','La','Si'];
+const SIMPLE=['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'];
+const ROOTS=[{l:0,a:0},{l:1,a:-1},{l:1,a:0},{l:2,a:-1},{l:2,a:0},{l:3,a:0},{l:3,a:1},{l:4,a:0},{l:5,a:-1},{l:5,a:0},{l:6,a:-1},{l:6,a:0}];
+const TUNINGS=[
+ {id:'std',n:'Standart',m:[40,45,50,55,59,64]},
+ {id:'eb',n:'E♭ standart',m:[39,44,49,54,58,63],d:'Her tel yarım ses pes. Hendrix, Stevie Ray Vaughan, Van Halen.'},
+ {id:'dstd',n:'D standart',m:[38,43,48,53,57,62],d:'Her tel bir ses pes. Ağır rock ve grunge.'},
+ {id:'dropd',n:'Drop D',m:[38,45,50,55,59,64],d:'Sadece 6. tel bir ses pes. Tek parmakla power chord, rock ve metal riffleri.'},
+ {id:'dropc',n:'Drop C',m:[36,43,48,53,57,62],d:'D standardın 6. teli bir ses daha pes. Modern metal.'},
+ {id:'dadgad',n:'DADGAD',m:[38,45,50,55,57,62],d:'Kelt ve akustik fingerstyle; Jimmy Page "Kashmir".'},
+ {id:'openg',n:'Open G',m:[38,43,50,55,59,62],d:'Açık teller G majör çalar. Keith Richards, slide gitar.'},
+ {id:'opend',n:'Open D',m:[38,45,50,54,57,62],d:'Açık teller D majör çalar. Slide ve folk.'},
+ {id:'opene',n:'Open E',m:[40,47,52,56,59,64],d:'Açık teller E majör çalar. Slide blues.'}
+];
+let BASE=TUNINGS[0].m.slice();let TUNING=BASE.slice();let STR=['E','A','D','G','B','e'];
+function uniformTuning(){const d=[5,5,5,4,5];return BASE.every((m,i)=>i===0||m-BASE[i-1]===d[i-1]);}
+function applyTuning(){
+  const T=TUNINGS.find(t=>t.id===st.tun)||TUNINGS[0];
+  BASE=T.m.slice();TUNING=BASE.map(m=>m+st.capo);
+  STR=BASE.map((m,i)=>{const n=SIMPLE[m%12];return i===5?n.toLowerCase():n;});
+  if(typeof vCache!=='undefined')Object.keys(vCache).forEach(k=>delete vCache[k]);
+  try{localStorage.setItem('tuning',JSON.stringify({tun:st.tun,capo:st.capo}));}catch(e){}
+}
+const THEMES=[['auto','Otomatik'],['light','Açık'],['dark','Koyu'],['sepia','Sepya']];
+function applyTheme(){
+  const r=document.documentElement;if(st.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',st.theme);
+  try{localStorage.setItem('theme',st.theme);}catch(e){}
+}
+function loadTuning(){try{const o=JSON.parse(localStorage.getItem('tuning')||'{}');return {tun:o.tun||'std',capo:o.capo||0};}catch(e){return {tun:'std',capo:0};}}
+const BOXC=['#D39A22','#2E8C8F','#4E6FA8','#A3517E','#6E8A2E'];
+
+function acc(a){return a===0?'':a===1?'♯':a===2?'𝄪':a===-1?'♭':a===-2?'♭♭':''}
+function nn(n){return LETTERS[n.l]+acc(n.a)}
+function pcOf(n){return ((LETTER_PC[n.l]+n.a)%12+12)%12}
+function solf(n){return SOLF[n.l]+(n.a===1?' diyez':n.a===-1?' bemol':n.a===2?' çift diyez':n.a===-2?' çift bemol':'')}
+function spell(root,d,s){
+  const l=(root.l+d-1)%7;
+  const target=(pcOf(root)+s)%12;
+  let a=target-LETTER_PC[l];
+  a=((a+6)%12+12)%12-6;
+  return {l,a};
+}
+
+const I={
+  R:{d:1,s:0,lab:'1',name:'kök',cat:'root'},
+  b3:{d:3,s:3,lab:'♭3',name:'küçük üçlü',cat:'third'},
+  M3:{d:3,s:4,lab:'3',name:'büyük üçlü',cat:'third'},
+  P5:{d:5,s:7,lab:'5',name:'tam beşli',cat:'fifth'},
+  b5:{d:5,s:6,lab:'♭5',name:'eksik beşli',cat:'fifth'},
+  s5:{d:5,s:8,lab:'♯5',name:'artık beşli',cat:'fifth'},
+  M2:{d:2,s:2,lab:'2',name:'büyük ikili',cat:'ext'},
+  P4:{d:4,s:5,lab:'4',name:'tam dörtlü',cat:'ext'},
+  M6:{d:6,s:9,lab:'6',name:'büyük altılı',cat:'ext'},
+  b7:{d:7,s:10,lab:'♭7',name:'küçük yedili',cat:'seventh'},
+  M7:{d:7,s:11,lab:'7',name:'büyük yedili',cat:'seventh'},
+  d7:{d:7,s:9,lab:'𝄫7',name:'eksik yedili',cat:'seventh'},
+  M9:{d:9,s:14,lab:'9',name:'büyük dokuzlu',cat:'ext'},
+  s9:{d:9,s:15,lab:'♯9',name:'artık dokuzlu',cat:'ext'},
+  P11:{d:11,s:17,lab:'11',name:'tam onbirli',cat:'ext'},
+  b6:{d:6,s:8,lab:'♭6',name:'küçük altılı',cat:'ext'}
+};
+const TYPES=[
+  {id:'maj',sym:'',chip:'Majör',tr:'majör',iv:['R','M3','P5'],caged:'maj'},
+  {id:'m',sym:'m',chip:'m',tr:'minör',iv:['R','b3','P5'],caged:'m'},
+  {id:'7',sym:'7',chip:'7',tr:'dominant yedili',iv:['R','M3','P5','b7'],caged:'7'},
+  {id:'maj7',sym:'maj7',chip:'maj7',tr:'majör yedili',iv:['R','M3','P5','M7']},
+  {id:'m7',sym:'m7',chip:'m7',tr:'minör yedili',iv:['R','b3','P5','b7']},
+  {id:'sus2',sym:'sus2',chip:'sus2',tr:'asılı ikili',iv:['R','M2','P5']},
+  {id:'sus4',sym:'sus4',chip:'sus4',tr:'asılı dörtlü',iv:['R','P4','P5']},
+  {id:'7sus4',sym:'7sus4',chip:'7sus4',tr:'yedili asılı dörtlü',iv:['R','P4','P5','b7']},
+  {id:'6',sym:'6',chip:'6',tr:'majör altılı',iv:['R','M3','P5','M6']},
+  {id:'m6',sym:'m6',chip:'m6',tr:'minör altılı',iv:['R','b3','P5','M6']},
+  {id:'add9',sym:'add9',chip:'add9',tr:'eklemeli dokuzlu',iv:['R','M3','P5','M9']},
+  {id:'9',sym:'9',chip:'9',tr:'dominant dokuzlu',iv:['R','M3','P5','b7','M9']},
+  {id:'dim',sym:'dim',chip:'dim',tr:'eksik',iv:['R','b3','b5']},
+  {id:'m7b5',sym:'m7♭5',chip:'m7♭5',tr:'yarım eksik',iv:['R','b3','b5','b7']},
+  {id:'dim7',sym:'dim7',chip:'dim7',tr:'eksik yedili',iv:['R','b3','b5','d7']},
+  {id:'aug',sym:'aug',chip:'aug',tr:'artık',iv:['R','M3','s5']},
+  {id:'5',sym:'5',chip:'5 (power)',tr:'power chord (beşli)',iv:['R','P5'],minPlay:2,maxPlay:3},
+  {id:'7s9',sym:'7♯9',chip:'7♯9',tr:'yedili artık dokuzlu',iv:['R','M3','P5','b7','s9']},
+  {id:'mmaj9',sym:'m(maj9)',chip:'m(maj9)',tr:'minör majör dokuzlu',iv:['R','b3','P5','M7','M9']},
+  {id:'add2',sym:'add2',chip:'add2',tr:'eklemeli ikili',iv:['R','M2','M3','P5']},
+  {id:'m11',sym:'m11',chip:'m11',tr:'minör onbirli',iv:['R','b3','P5','b7','P11']}
+];
+const FAMOUS=[
+  {n:'Hendrix akoru',root:{l:2,a:0},type:'7s9',fr:[-1,7,6,7,8,-1],who:'Jimi Hendrix, "Purple Haze" (1967)',
+   d:'Büyük üçlü (G♯) ile ♯9 aynı anda çalar. ♯9 kâğıtta F𝄪 yazılır ama kulağa minör üçlü (G) gibi gelir; majör ile minörün çatışması bu akora o kirli, blues gerilimini verir.'},
+  {n:'James Bond akoru',root:{l:2,a:0},type:'mmaj9',fr:[0,2,1,0,0,2],who:'James Bond teması, film müziklerinin kapanışı',
+   d:'Minör akorun üstüne büyük yedili (D♯) ve dokuzlu (F♯) eklenir. Minör üçlü ile büyük yedilinin yan yana durması gizemli, gerilimli bir renk verir.'},
+  {n:'So What akoru',root:{l:2,a:0},type:'m11',fr:[0,0,0,0,0,-1],who:'Miles Davis, "So What" (Kind of Blue, 1959)',
+   d:'Alttan üç tam dörtlü ve en üstte bir büyük üçlü: E A D G B. Bu sesler gitarın ilk beş açık teliyle aynı, yani akor kendiliğinden elinin altında.'},
+  {n:'Tristan akoru',root:{l:3,a:0},type:'m7b5',fr:[-1,-1,3,4,4,4],who:'Richard Wagner, Tristan und Isolde (1865)',
+   d:'Wagner bunu F B D♯ G♯ olarak yazmıştır; sesler F yarım eksik akoruyla (Fm7♭5) aynıdır. Çözülmeyi sürekli erteleyen bu akor, Batı armonisinin dönüm noktalarından sayılır.'},
+  {n:'Mu akoru',root:{l:4,a:0},type:'add2',fr:[3,-1,0,2,0,3],who:'Steely Dan',
+   d:'Majör akora ikinci derece eklenir ve bu ses büyük üçlüye yapışık durur (burada A ile B). Steely Dan şarkılarının yumuşak, caz kokulu imzasıdır.'},
+  {n:'Power chord',root:{l:2,a:0},type:'5',fr:[0,2,2,-1,-1,-1],who:'Rock ve metalin temeli',
+   d:'Sadece kök ve beşli var, üçlü yok; bu yüzden ne majör ne minör. Distorsiyonla çok temiz duyulur ve tek şekil kaydırılarak her yerde çalınır.'},
+  {n:'Hard Day\'s Night akoru',root:{l:4,a:0},type:'7sus4',fr:[3,-1,3,0,1,3],who:'The Beatles, "A Hard Day\'s Night" (1964)',
+   d:'Şarkının açılış akoru yıllardır tartışılır, çünkü kayıtta birden fazla enstrüman birlikte çalar. Burada gitarcıların sık kullandığı G7sus4 yaklaşımı var; kesin çözüm değildir.'}
+];
+const SCALES={
+  minp:{name:'minör pentatonik',chip:'Minör penta',iv:['R','b3','P4','P5','b7'],rel:['majp',3,3],
+    info:'Rock ve blues solosunun temeli. Beş ses, yarım ses yok; hangi notaya basarsan bas kötü duyulmaz.'},
+  majp:{name:'majör pentatonik',chip:'Majör penta',iv:['R','M2','M3','P5','M6'],rel:['minp',6,9],
+    info:'Country, pop ve neşeli rock soloları. Minör pentatonikle aynı kutuları kullanır, kök farklıdır.'},
+  blues:{name:'blues gamı',chip:'Blues',iv:['R','b3','P4','b5','P5','b7'],pent:'minp',
+    info:'Minör pentatoniğe ♭5 eklenir. Bu "blue note" geçiş sesidir: üzerinde durma, kaydırarak geç.'},
+  major:{name:'majör gam',chip:'Majör',iv:['R','M2','M3','P4','P5','M6','M7'],pent:'majp',rel:['minor',6,9],
+    info:'Majör pentatoniğe 4 ve 7 eklenmiş hali. Pozisyonlar majör pentatonik kutularının üzerine iki ses eklenerek kurulur.'},
+  minor:{name:'doğal minör (eolyen)',chip:'Doğal minör',iv:['R','M2','b3','P4','P5','b6','b7'],pent:'minp',rel:['major',3,3],
+    info:'Minör pentatoniğe 2 ve ♭6 eklenir. Hüzünlü, klasik minör renk; rock ve metal baladlarında yaygın.'},
+  dorian:{name:'dorian',chip:'Dorian',iv:['R','M2','b3','P4','P5','M6','b7'],pent:'minp',
+    info:'Doğal minörden tek farkı büyük altılı (6). Daha aydınlık bir minör: Santana, funk, caz-rock. m7 ve i–IV ilerlemelerinde parlar.'},
+  mixo:{name:'mixolydian',chip:'Mixolydian',iv:['R','M2','M3','P4','P5','M6','b7'],pent:'majp',
+    info:'Majör gamdan tek farkı küçük yedili (♭7). Dominant 7 akorlarının ve I–♭VII–IV rock ilerlemelerinin gamı.'}
+};
+const CAGED={
+  maj:[{n:'C',ref:1,o:[null,0,-1,-3,-2,-3]},{n:'A',ref:1,o:[null,0,2,2,2,0]},{n:'G',ref:0,o:[0,-1,-3,-3,-3,0]},{n:'E',ref:0,o:[0,2,2,1,0,0]},{n:'D',ref:2,o:[null,null,0,2,3,2]}],
+  m:[{n:'Am',ref:1,o:[null,0,2,2,1,0]},{n:'Em',ref:0,o:[0,2,2,0,0,0]},{n:'Dm',ref:2,o:[null,null,0,2,3,1]}],
+  '7':[{n:'C7',ref:1,o:[null,0,-1,0,-2,-3]},{n:'A7',ref:1,o:[null,0,2,0,2,0]},{n:'G7',ref:0,o:[0,-1,-3,-3,-3,-2]},{n:'E7',ref:0,o:[0,2,0,1,0,0]},{n:'D7',ref:2,o:[null,null,0,2,1,2]}]
+};
+const MAJ=[{l:0,a:0},{l:4,a:0},{l:1,a:0},{l:5,a:0},{l:2,a:0},{l:6,a:0},{l:3,a:1},{l:1,a:-1},{l:5,a:-1},{l:2,a:-1},{l:6,a:-1},{l:3,a:0}];
+const MIN=[{l:5,a:0},{l:2,a:0},{l:6,a:0},{l:3,a:1},{l:0,a:1},{l:4,a:1},{l:1,a:1},{l:6,a:-1},{l:3,a:0},{l:0,a:0},{l:4,a:0},{l:1,a:0}];
+const SIG=['işaretsiz','1 diyez','2 diyez','3 diyez','4 diyez','5 diyez','6 diyez','5 bemol','4 bemol','3 bemol','2 bemol','1 bemol'];
+const DIA_MAJ={s:[0,2,4,5,7,9,11],t:['maj','m','m','maj','maj','m','dim'],r:['I','ii','iii','IV','V','vi','vii°']};
+const DIA_MIN={s:[0,2,3,5,7,8,10],t:['m','dim','maj','m','m','maj','maj'],r:['i','ii°','III','iv','v','VI','VII']};
+
+let st={root:{l:2,a:0},type:'maj',vi:0,mode:'finger',tab:'voicing',rs:'all',scale:'minp',box:'all',key:{l:2,a:0,minor:false},bpm:90,sig:'4/4',sub:1,pat:0,rstr:0,ihl:'all',ms:'notes',ntm:'nat',refp:5,tq:null,tset:3,fx:0,pk:0,octm:'pairs',qz:{m:'h',str:0,i:0,show:false,auto:false},jam:0,jscale:'blues',jbar:0,jd:true,jbass:true,jc:true,ss:'order',rad:'9.5',scl:648,pu:{neck:'s',mid:'s',bridge:'h'},su:loadSu(),a4:440,tmode:'tune',shm:'one',fd:[-1,-1,-1,-1,-1,-1],fs:1,...loadTuning(),theme:(()=>{try{return localStorage.getItem('theme')||'auto'}catch(e){return 'auto'}})(),pat2:0,sprog:false,sclick:true};
+
+function tonesFor(root,ivs){
+  const rootPc=pcOf(root);
+  const tones=ivs.map(k=>{const v=I[k];const note=spell(root,v.d,v.s);return {...v,key:k,note,nn:nn(note),pc:(rootPc+v.s)%12};});
+  const byPc={};tones.forEach(t=>byPc[t.pc]=t);
+  return {tones,byPc,rootPc};
+}
+function chord(){
+  const root=st.root;const T=TYPES.find(t=>t.id===st.type);
+  return {root,T,...tonesFor(root,T.iv),sym:nn(root)+T.sym};
+}
+function scaleData(key,root){
+  key=key||st.scale;root=root||st.root;const S=SCALES[key];
+  return {root,S,key,...tonesFor(root,S.iv),name:nn(root)+' '+S.name};
+}
+/* Pentatonik kutularına eksik gam seslerini ekleyerek pozisyon kurar */
+function scaleBoxes(sd){
+  if(!sd.S.pent)return boxes(sd);
+  const psd=scaleData(sd.S.pent,sd.root);const pb=boxes(psd);
+  const ppcs=new Set(psd.tones.map(t=>t.pc));const extra=new Set(sd.tones.map(t=>t.pc).filter(p=>!ppcs.has(p)));
+  return pb.map(box=>{
+    const notes=box.notes.map(n=>({...n}));const ps=notes.map(n=>n.p);const lo=Math.min(...ps),hi=Math.max(...ps);
+    for(let p=lo+1;p<hi;p++){
+      if(!extra.has(p%12))continue;
+      const c=[];
+      for(let i=0;i<6;i++){
+        const f=p-TUNING[i];if(f<0||f>22||f<box.minF-1||f>box.maxF+1)continue;
+        const sn=notes.filter(n=>n.i===i).map(n=>n.p);
+        const inside=sn.length&&p>Math.min(...sn)&&p<Math.max(...sn);
+        const out=(f<box.minF||f>box.maxF)?1:0;
+        c.push({i,f,sc:out*2+(inside?0:1)+sn.length*.1});
+      }
+      if(!c.length)continue;c.sort((a,b)=>a.sc-b.sc);notes.push({i:c[0].i,f:c[0].f,p});
+    }
+    const fs=notes.map(n=>n.f);return {...box,notes,minF:Math.min(...fs),maxF:Math.max(...fs)};
+  });
+}
+
+function fingering(fr){
+  const fretted=[];fr.forEach((f,i)=>{if(f>0)fretted.push({i,f})});
+  const fing=fr.map(()=>0);
+  if(!fretted.length)return {fing,barre:null};
+  if(fretted.length<=4){
+    fretted.sort((a,b)=>a.f-b.f||a.i-b.i);
+    fretted.forEach((n,k)=>fing[n.i]=k+1);
+    return {fing,barre:null};
+  }
+  const f0=Math.min(...fretted.map(n=>n.f));
+  const at=fretted.filter(n=>n.f===f0);
+  if(at.length<2)return null;
+  const lo=Math.min(...at.map(n=>n.i)),hi=Math.max(...at.map(n=>n.i));
+  for(let i=lo;i<=hi;i++){if(fr[i]<f0)return null;}
+  const rest=fretted.filter(n=>n.f>f0);
+  if(rest.length>3)return null;
+  at.forEach(n=>fing[n.i]=1);
+  rest.sort((a,b)=>a.f-b.f||a.i-b.i).forEach((n,k)=>fing[n.i]=k+2);
+  return {fing,barre:{fret:f0,from:lo,to:hi}};
+}
+
+
+/* Yaygın kalıplar: [ad, ofsetler (6.telden 1.tele, null=çalınmaz)]. İlk ikisi E ve A şekli (öncelikli) */
+const N=null;
+const TPL={
+ maj:[['E şekli',[0,2,2,1,0,0]],['A şekli',[N,0,2,2,2,0]],['C şekli',[N,0,-1,-3,-2,-3]],['G şekli',[0,-1,-3,-3,-3,0]],['D şekli',[N,N,0,2,3,2]],['G şekli (dolgun)',[0,-1,-3,-3,0,0],1.5]],
+ m:[['Em şekli',[0,2,2,0,0,0]],['Am şekli',[N,0,2,2,1,0]],['Dm şekli',[N,N,0,2,3,1]]],
+ '7':[['E7 şekli',[0,2,0,1,0,0]],['A7 şekli',[N,0,2,0,2,0]],['C7 şekli',[N,0,-1,0,-2,-3]],['G7 şekli',[0,-1,-3,-3,-3,-2]],['D7 şekli',[N,N,0,2,1,2]],['E7 şekli (dolgun)',[0,2,2,1,3,0]],['A7 şekli (dolgun)',[N,0,2,2,2,3]]],
+ maj7:[['Emaj7 şekli',[0,2,1,1,0,0]],['Amaj7 şekli',[N,0,2,1,2,0]],['Cmaj7 şekli',[N,0,-1,-3,-3,-3]],['Gmaj7 şekli',[0,-1,-3,-3,-3,-1]],['Dmaj7 şekli',[N,N,0,2,2,2]]],
+ m7:[['Em7 şekli (dolgun)',[0,2,2,0,3,0],-1],['Em7 şekli',[0,2,0,0,0,0]],['Em7 şekli (G teli)',[0,2,2,0,3,3]],['Am7 şekli',[N,0,2,0,1,0]],['Dm7 şekli',[N,N,0,2,1,1]]],
+ sus2:[['Esus2 şekli',[0,2,4,4,0,0]],['Asus2 şekli',[N,0,2,2,0,0]],['Dsus2 şekli',[N,N,0,2,3,0]]],
+ sus4:[['Esus4 şekli',[0,2,2,2,0,0]],['Asus4 şekli',[N,0,2,2,3,0]],['Dsus4 şekli',[N,N,0,2,3,3]],['Gsus4 şekli',[0,0,-3,-3,-2,0]]],
+ '7sus4':[['E7sus4 şekli',[0,2,0,2,0,0]],['A7sus4 şekli',[N,0,2,0,3,0]],['D7sus4 şekli',[N,N,0,2,1,3]]],
+ '6':[['E6 şekli',[0,2,2,1,2,0]],['A6 şekli',[N,0,2,2,2,2]],['C6 şekli',[N,0,-1,-1,-2,-3]],['D6 şekli',[N,N,0,2,0,2]]],
+ m6:[['Em6 şekli',[0,2,2,0,2,0]],['Am6 şekli',[N,0,2,2,1,2]],['Dm6 şekli',[N,N,0,2,0,1]]],
+ add9:[['Eadd9 şekli',[0,2,4,1,0,0]],['Aadd9 şekli',[N,0,2,4,2,0]],['Cadd9 şekli',[N,0,-1,-3,0,-3]]],
+ '9':[['E9 şekli',[0,2,0,1,0,2]],['C9 şekli',[N,0,-1,0,0,0]]],
+ dim:[['Edim şekli',[0,1,2,0,N,N]],['Adim şekli',[N,0,1,2,1,N]],['Ddim şekli',[N,N,0,1,3,1]]],
+ m7b5:[['Em7♭5 şekli',[0,1,0,0,-1,N]],['Am7♭5 şekli',[N,0,1,0,1,N]],['Dm7♭5 şekli',[N,N,0,1,1,1]]],
+ dim7:[['Edim7 şekli',[0,1,-1,0,-1,N]],['Adim7 şekli',[N,0,1,-1,1,N]],['Ddim7 şekli',[N,N,0,1,0,1]]],
+ aug:[['E+ şekli',[0,3,2,1,1,0]],['A+ şekli',[N,0,3,2,2,1]],['C+ şekli',[N,0,-1,-2,-2,-3]]],
+ '5':[['E5 şekli',[0,2,2,N,N,N]],['A5 şekli',[N,0,2,2,N,N]],['D5 şekli',[N,N,0,2,3,N]]],
+ '7s9':[['Hendrix şekli',[N,0,-1,0,1,N]]],
+ mmaj9:[['James Bond şekli',[0,2,1,0,0,2]]],
+ add2:[['Mu şekli',[0,N,-3,-1,-3,0]]],
+ m11:[['So What şekli',[0,0,0,0,0,N]]]
+};
+function tplVoicings(c){
+  if(!uniformTuning())return [];
+  const set=TPL[c.T.id]||[];const pcs=new Set(c.tones.map(t=>t.pc));const out=[];
+  let mi=0;set.forEach(([name,o,pr],pi)=>{const mainIx=name.indexOf('(')<0?mi++:99;
+    const ref=o.findIndex(x=>x!==null);const offs=o.filter(x=>x!==null);const minO=Math.min(...offs),maxO=Math.max(...offs);
+    let r=posOn(ref,c.rootPc,-minO);
+    for(;r+maxO<=22;r+=12){
+      const fr=o.map(x=>x===null?-1:r+x);
+      if(!fr.every((f,i)=>f<0||pcs.has((TUNING[i]+f)%12)))continue;
+      if(name.indexOf('(')>=0&&!fr.includes(0))continue;
+      const v=pinV(fr);v.tname=name;v.prio=pr!==undefined?pr:(name.indexOf('(')>=0?0.5:(mainIx<2?0:1));v.tier=fr.includes(0)?0:1;out.push(v);
+    }
+  });
+  return out;
+}
+
+const vCache={};
+function voicings(c){
+  const key=c.rootPc+'|'+c.T.id;
+  if(vCache[key])return vCache[key];
+  const pcs=new Set(c.tones.map(t=>t.pc));
+  const req=new Set(c.tones.filter(t=>!(c.tones.length>=5&&t.cat==='fifth')).map(t=>t.pc));
+  const all=new Map();
+  for(let b=1;b<=19;b++){
+    const opts=TUNING.map(o=>{const r=[-1];if(pcs.has(o%12))r.push(0);for(let f=b;f<=b+3;f++)if(pcs.has((o+f)%12))r.push(f);return r;});
+    const cur=[];
+    (function rec(s,ph){
+      if(s===6){evalV(cur.slice());return;}
+      for(const f of opts[s]){
+        let np;
+        if(f===-1)np=ph===0?0:2;
+        else{if(ph===2)continue;np=1;}
+        cur[s]=f;rec(s+1,np);
+      }
+    })(0,0);
+  }
+  function evalV(fr){
+    let k=0;while(k<6&&fr[k]===-1)k++;
+    let m=5;while(m>=0&&fr[m]===-1)m--;
+    const tm=5-m;
+    const played=fr.filter(f=>f>=0).length;
+    if(played<(c.T.minPlay||4))return;
+    if(c.T.maxPlay&&(played>c.T.maxPlay||k>2))return;
+    const fretted=fr.filter(f=>f>0);
+    const minF=fretted.length?Math.min(...fretted):0,maxF=fretted.length?Math.max(...fretted):0;
+    if(maxF-minF>3)return;
+    if(fr.includes(0)&&maxF>4)return;
+    if((TUNING[k]+fr[k])%12!==c.rootPc)return;
+    const have=new Set();fr.forEach((f,i)=>{if(f>=0)have.add((TUNING[i]+f)%12)});
+    for(const p of req)if(!have.has(p))return;
+    const key=fr.join(',');if(all.has(key))return;
+    const fg=fingering(fr);if(!fg)return;
+    const rootCount=fr.filter((f,i)=>f>=0&&(TUNING[i]+f)%12===c.rootPc).length;
+    const opens=fr.filter(f=>f===0).length;
+    const sc=played*2-fretted.length*.4-minF*.12+opens*.4+rootCount*.3-(fg.barre?.8:0)-tm*1.5+(c.T.maxPlay?tm*1.5+played:0)-(maxF-minF)*.3;
+    all.set(key,{frets:fr,fing:fg.fing,barre:fg.barre,sc,k,minF,maxF});
+  }
+  const best={};
+  for(const v of all.values()){const g=v.k+'|'+v.minF;if(!best[g]||best[g].sc<v.sc)best[g]=v;}
+  const rest=Object.values(best);
+  const tv=tplVoicings(c);const tk=new Set(tv.map(v=>v.frets.join(',')));
+  const others=rest.filter(v=>!tk.has(v.frets.join(',')));
+  others.forEach(v=>{v.tier=v.frets.includes(0)&&v.maxF<=4?2:3;});
+  const byPos=(a,b)=>a.tier-b.tier||(a.prio||0)-(b.prio||0)||a.minF-b.minF||a.k-b.k;
+  const list=[...tv,...others].sort(byPos).slice(0,28);
+  vCache[key]=list;return list;
+}
+
+function cagedShapes(c){
+  const set=CAGED[c.T.caged];if(!set)return null;
+  return set.map(sh=>{
+    const offs=sh.o.filter(x=>x!==null);const minO=Math.min(...offs);
+    let r=((c.rootPc-TUNING[sh.ref]%12)+12)%12;
+    while(r+minO<0)r+=12;
+    const fr=sh.o.map(x=>x===null?-1:r+x);
+    const fg=fingering(fr)||{fing:fr.map(()=>0),barre:null};
+    const fretted=fr.filter(f=>f>0);
+    if(!fr.every((f,i)=>f<0||c.byPc[(TUNING[i]+f)%12]))return null;
+    return {name:sh.n,ref:sh.ref,r,frets:fr,fing:fg.fing,barre:fg.barre,minF:fretted.length?Math.min(...fretted):0,maxF:fretted.length?Math.max(...fretted):0,k:fr.findIndex(f=>f>=0)};
+  }).filter(Boolean).sort((a,b)=>a.minF-b.minF);
+}
+
+/* Pentatonik kutular: her telde iki ses, kalın telden ince tele */
+function boxes(sd){
+  const semis=sd.tones.map(t=>t.s%12);
+  const pcs=new Set(sd.tones.map(t=>t.pc));
+  return semis.map((s,j)=>{
+    const startPc=(sd.rootPc+s)%12;
+    const f0=((startPc-4)%12+12)%12;
+    let p=40+f0;const ps=[];
+    while(ps.length<12){if(pcs.has(p%12))ps.push(p);p++;}
+    let notes=ps.map((pp,k)=>{const i=Math.floor(k/2);return {i,f:pp-TUNING[i],p:pp};});
+    if(notes.some(n=>n.f<0))notes=notes.map(n=>({...n,f:n.f+12,p:n.p+12}));
+    const fs=notes.map(n=>n.f);
+    return {num:j+1,notes,minF:Math.min(...fs),maxF:Math.max(...fs)};
+  }).sort((a,b)=>a.minF-b.minF);
+}
+
+function pinV(fr){
+  const fretted=fr.filter(f=>f>0);
+  const fg=fingering(fr)||{fing:fr.map(()=>0),barre:null};
+  return {frets:fr,fing:fg.fing,barre:fg.barre,k:fr.findIndex(f=>f>=0),minF:fretted.length?Math.min(...fretted):0,maxF:fretted.length?Math.max(...fretted):0,sc:99};
+}
+function boxInstances(bx){
+  const out=[];
+  bx.forEach(b=>[-12,0,12].forEach(sh=>{
+    const mn=b.minF+sh,mx=b.maxF+sh;
+    if(mn>=0&&mx<=22)out.push({...b,minF:mn,maxF:mx,notes:b.notes.map(n=>({...n,f:n.f+sh,p:n.p+sh}))});
+  }));
+  return out.sort((a,b)=>a.minF-b.minF);
+}
+function label(t,v,i){
+  if(st.mode==='finger')return v.fing[i]?String(v.fing[i]):'';
+  if(st.mode==='interval')return t.lab;
+  return t.nn;
+}
+function dotLabel(t){return st.mode==='note'?t.nn:t.lab;}
+
+function diagram(c,v,small){
+  const fr=v.frets;
+  const start=v.maxF<=5?1:v.minF;const nF=5;
+  const cw=small?24:34,ch=small?28:40,L=small?26:38,T=small?24:34,R=small?10:13;
+  const W=L+cw*5+(small?14:22),H=T+ch*nF+(small?22:32);
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${c.sym} basışı: ${fr.map(f=>f<0?'x':f).join(' ')}">`;
+  s+=boardV(L,T,cw,ch,nF,start,small);
+  if(v.barre&&st.mode==='finger'){
+    const y=T+ch*(v.barre.fret-start+.5),x1=L+cw*v.barre.from,x2=L+cw*v.barre.to;
+    s+=`<rect x="${x1-R}" y="${y-R}" width="${x2-x1+2*R}" height="${2*R}" rx="${R}" fill="var(--bone)" opacity=".85"/>`;
+  }
+  for(let i=0;i<6;i++){
+    const f=fr[i],x=L+cw*i;
+    if(f<0){s+=`<text x="${x}" y="${T-(small?8:11)}" text-anchor="middle" font-size="${small?13:17}" fill="var(--muted)">×</text>`;continue;}
+    const t=c.byPc[(TUNING[i]+f)%12]||{cat:'ext',lab:'?',nn:SIMPLE[(TUNING[i]+f)%12]};const col=`var(--${t.cat})`;
+    const md=TUNING[i]+f;
+    if(f===0){s+=`<g data-midi="${md}" style="cursor:pointer"><circle cx="${x}" cy="${T-(small?12:16)}" r="${small?6:8}" fill="${small?'none':'var(--bg)'}" stroke="${col}" stroke-width="2.5"/></g>`;}
+    else{
+      const y=T+ch*(f-start+.5);const lab=label(t,v,i);
+      s+=`<g data-midi="${md}" style="cursor:pointer">${dot(x,y,R,t,lab,small)}</g>`;
+    }
+    s+=`<text x="${x}" y="${H-(small?6:9)}" text-anchor="middle" font-size="${small?11:14}" font-weight="700" fill="var(--${t.cat})">${t.nn}</text>`;
+  }
+  return s+'</svg>';
+}
+function boardV(L,T,cw,ch,nF,start,small){
+  let s=`<rect x="${L-7}" y="${T}" width="${cw*5+14}" height="${ch*nF}" rx="3" fill="var(--board)"/>`;
+  for(let k=0;k<nF;k++){
+    const fn=start+k,y=T+ch*(k+.5),r=small?3:4;
+    if([3,5,7,9,15,17].includes(fn))s+=`<circle cx="${L+cw*2.5}" cy="${y}" r="${r}" fill="#EFE6D2" opacity=".22"/>`;
+    if(fn===12)s+=`<circle cx="${L+cw*1.5}" cy="${y}" r="${r}" fill="#EFE6D2" opacity=".22"/><circle cx="${L+cw*3.5}" cy="${y}" r="${r}" fill="#EFE6D2" opacity=".22"/>`;
+  }
+  for(let k=0;k<=nF;k++){
+    const y=T+ch*k,nut=k===0&&start===1;
+    s+=`<line x1="${L-7}" x2="${L+cw*5+7}" y1="${y}" y2="${y}" stroke="${nut?'var(--bone)':'var(--fret)'}" stroke-width="${nut?(small?5:7):2}"/>`;
+  }
+  for(let i=0;i<6;i++){const x=L+cw*i;s+=`<line x1="${x}" x2="${x}" y1="${T}" y2="${T+ch*nF}" stroke="var(--string)" stroke-width="${(2.4-i*.32).toFixed(2)}"/>`;}
+  if(start>1)s+=`<text x="${L-12}" y="${T+ch*.5+5}" text-anchor="end" font-size="${small?12:15}" font-weight="700" fill="var(--ink)">${start}</text>`;
+  return s;
+}
+function dot(x,y,R,t,lab,small,extra){
+  let s=`<circle cx="${x}" cy="${y}" r="${R}" fill="var(--${t.cat})" ${t.cat==='root'?'stroke="var(--bone)" stroke-width="2"':''} ${extra||''}/>`;
+  if(lab)s+=`<text x="${x}" y="${y+(small?4:5)}" text-anchor="middle" font-size="${small?(lab.length>1?9:11):(lab.length>1?12:15)}" font-weight="700" fill="${t.cat==='root'?'#2A1C05':'#fff'}" pointer-events="none" ${extra||''}>${lab}</text>`;
+  return s;
+}
+
+function boxDiagram(sd,b){
+  const start=b.minF<=1?1:b.minF;const nF=Math.max(5,b.maxF-start+1);
+  const cw=34,ch=36,L=38,T=40,R=13;
+  const W=L+cw*5+22,H=T+ch*nF+32;
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Kutu ${b.num}">`;
+  s+=boardV(L,T,cw,ch,nF,start,false);
+  b.notes.forEach(n=>{
+    const t=sd.byPc[n.p%12];const x=L+cw*n.i;
+    const y=n.f===0?T-18:T+ch*(n.f-start+.5);
+    s+=`<g data-midi="${n.p}" style="cursor:pointer">${dot(x,y,n.f===0?11:R,t,dotLabel(t),n.f===0)}</g>`;
+  });
+  STR.forEach((nm,i)=>s+=`<text x="${L+cw*i}" y="${H-9}" text-anchor="middle" font-size="13" fill="var(--muted)">${nm}</text>`);
+  return s+'</svg>';
+}
+
+function neck(byPc,o){
+  o=o||{};
+  const nF=o.nF||22,L=44,fw=46,strip=o.boxes?42:0,T=22+strip,sh=30;
+  const W=L+fw*nF+18,H=T+sh*5+42;
+  const xf=f=>f===0?L-17:L+fw*(f-.5);
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Sap üzerindeki notalar">`;
+  s+=`<rect x="${L}" y="${T-12}" width="${fw*nF}" height="${sh*5+24}" fill="var(--board)" rx="3"/>`;
+  [3,5,7,9,15,17,19,21].filter(f=>f<=nF).forEach(f=>s+=`<circle cx="${L+fw*(f-.5)}" cy="${T+sh*2.5}" r="5" fill="#EFE6D2" opacity=".2"/>`);
+  s+=`<circle cx="${L+fw*11.5}" cy="${T+sh*1.5}" r="5" fill="#EFE6D2" opacity=".2"/><circle cx="${L+fw*11.5}" cy="${T+sh*3.5}" r="5" fill="#EFE6D2" opacity=".2"/>`;
+  for(let k=0;k<=nF;k++)s+=`<line x1="${L+fw*k}" x2="${L+fw*k}" y1="${T-12}" y2="${T+sh*5+12}" stroke="${k===0?'var(--bone)':'var(--fret)'}" stroke-width="${k===0?7:2}"/>`;
+  for(let i=0;i<6;i++){const y=T+sh*(5-i);s+=`<line x1="${L}" x2="${L+fw*nF}" y1="${y}" y2="${y}" stroke="var(--string)" stroke-width="${(2.4-i*.32).toFixed(2)}"/><text x="8" y="${y+5}" font-size="13" fill="var(--muted)">${STR[i]}</text>`;}
+  for(let f=1;f<=nF;f++)s+=`<text x="${L+fw*(f-.5)}" y="${H-6}" text-anchor="middle" font-size="12" fill="var(--muted)">${f}</text>`;
+  let inSel=null;
+  if(o.boxes){
+    o.boxes.forEach((b,idx)=>{
+      const col=BOXC[b.num-1];const x1=xf(b.minF)-13,x2=xf(b.maxF)+13,y=4+(idx%2)*18;
+      const on=o.sel===undefined||o.sel===b.num;
+      s+=`<g data-box="${b.num}" style="cursor:pointer" opacity="${on?1:.35}"><rect x="${x1}" y="${y}" width="${x2-x1}" height="15" rx="7.5" fill="${col}"/><text x="${(x1+x2)/2}" y="${y+11.5}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" pointer-events="none">Kutu ${b.num}</text></g>`;
+    });
+    if(o.sel!==undefined){
+      inSel=new Set();
+      o.boxes.filter(x=>x.num===o.sel).forEach(b=>{
+        const x1=xf(b.minF)-15,x2=xf(b.maxF)+15;
+        s+=`<rect x="${x1}" y="${T-14}" width="${x2-x1}" height="${sh*5+28}" rx="10" fill="${BOXC[b.num-1]}" fill-opacity=".22" stroke="${BOXC[b.num-1]}" stroke-width="2"/>`;
+        b.notes.forEach(n=>inSel.add(n.i+','+n.f));
+      });
+    }
+  }
+  for(let i=0;i<6;i++)for(let f=0;f<=nF;f++){
+    const midi=TUNING[i]+f;const t=byPc[midi%12];if(!t)continue;
+    const dim=inSel&&!inSel.has(i+','+f);
+    s+=`<g data-midi="${midi}" style="cursor:pointer" opacity="${dim?.25:1}">${dot(xf(f),T+sh*(5-i),t.cat==='root'?13:11,t,dotLabel(t),true)}</g>`;
+  }
+  return s+'</svg>';
+}
+
+function wedge(r1,r2,a0,a1){
+  const p=(r,a)=>[(170+r*Math.cos(a*Math.PI/180)).toFixed(2),(170+r*Math.sin(a*Math.PI/180)).toFixed(2)];
+  const [x1,y1]=p(r2,a0),[x2,y2]=p(r2,a1),[x3,y3]=p(r1,a1),[x4,y4]=p(r1,a0);
+  return `M${x1} ${y1}A${r2} ${r2} 0 0 1 ${x2} ${y2}L${x3} ${y3}A${r1} ${r1} 0 0 0 ${x4} ${y4}Z`;
+}
+function circle(){
+  const kpc=pcOf(st.key);
+  const ki=st.key.minor?MIN.findIndex(n=>pcOf(n)===kpc):MAJ.findIndex(n=>pcOf(n)===kpc);
+  const fam=new Set([(ki+11)%12,ki,(ki+1)%12]);
+  const cpc=pcOf(st.root);
+  let s=`<svg viewBox="0 0 340 340" width="340" height="340" role="img" aria-label="Beşli çemberi">`;
+  for(let i=0;i<12;i++){
+    const a=i*30-90,a0=a-15,a1=a+15;
+    const selMaj=!st.key.minor&&i===ki,selMin=st.key.minor&&i===ki;
+    const curMaj=st.type==='maj'&&pcOf(MAJ[i])===cpc,curMin=st.type==='m'&&pcOf(MIN[i])===cpc;
+    const fillO=selMaj?'var(--sel)':fam.has(i)?'var(--root)':'var(--surface)';
+    const fillI=selMin?'var(--sel)':fam.has(i)?'var(--root)':'var(--surface)';
+    const opO=selMaj?1:fam.has(i)?.28:1,opI=selMin?1:fam.has(i)?.2:1;
+    s+=`<g data-key="maj|${i}" style="cursor:pointer"><path d="${wedge(112,164,a0,a1)}" fill="${fillO}" fill-opacity="${opO}" stroke="${curMaj?'var(--root)':'var(--line)'}" stroke-width="${curMaj?3:1}"/>`;
+    const px=r=>(170+r*Math.cos(a*Math.PI/180)).toFixed(1),py=r=>(170+r*Math.sin(a*Math.PI/180)).toFixed(1);
+    s+=`<text x="${px(142)}" y="${py(142)+6}" text-anchor="middle" font-size="19" font-weight="700" fill="${selMaj?'var(--selInk)':'var(--ink)'}" pointer-events="none">${nn(MAJ[i])}</text>`;
+    s+=`<text x="${px(122)}" y="${py(122)+4}" text-anchor="middle" font-size="9.5" fill="${selMaj?'var(--selInk)':'var(--muted)'}" pointer-events="none">${SIG[i].replace(' diyez','♯').replace(' bemol','♭').replace('işaretsiz','–')}</text></g>`;
+    s+=`<g data-key="min|${i}" style="cursor:pointer"><path d="${wedge(66,112,a0,a1)}" fill="${fillI}" fill-opacity="${opI}" stroke="${curMin?'var(--root)':'var(--line)'}" stroke-width="${curMin?3:1}"/>`;
+    s+=`<text x="${px(89)}" y="${py(89)+5}" text-anchor="middle" font-size="14" font-weight="700" fill="${selMin?'var(--selInk)':'var(--ink)'}" pointer-events="none">${nn(MIN[i])}m</text></g>`;
+  }
+  const majN=MAJ[ki],minN=MIN[ki];
+  s+=`<circle cx="170" cy="170" r="64" fill="var(--bg)"/>`;
+  s+=`<text x="170" y="160" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">${st.key.minor?nn(minN)+' minör':nn(majN)+' majör'}</text>`;
+  s+=`<text x="170" y="180" text-anchor="middle" font-size="12.5" fill="var(--muted)">${SIG[ki]}</text>`;
+  s+=`<text x="170" y="198" text-anchor="middle" font-size="12" fill="var(--muted)">ilgili: ${st.key.minor?nn(majN):nn(minN)+'m'}</text>`;
+  return s+'</svg>';
+}
+function diatonic(){
+  const D=st.key.minor?DIA_MIN:DIA_MAJ;
+  return D.s.map((s,j)=>{const note=spell(st.key,j+1,s);const T=TYPES.find(t=>t.id===D.t[j]);return {rn:D.r[j],note,type:D.t[j],sym:nn(note)+T.sym};});
+}
+
+/* Ses: Karplus-Strong tel sentezi */
+let ctx;const bufCache={};
+function ac(){if(!ctx)ctx=new (window.AudioContext||window.webkitAudioContext)();if(ctx.state==='suspended')ctx.resume();return ctx;}
+function pluck(midi,when,gain){
+  const c=ac();
+  if(!bufCache[midi]){
+    const f=440*Math.pow(2,(midi-69)/12),sr=c.sampleRate,len=Math.floor(sr*2.4);
+    const buf=c.createBuffer(1,len,sr),d=buf.getChannelData(0);
+    const N=Math.max(2,Math.round(sr/f)),ring=new Float32Array(N);
+    let prev=0;for(let i=0;i<N;i++){const r=Math.random()*2-1;prev=prev*.5+r*.5;ring[i]=prev;}
+    let idx=0;for(let i=0;i<len;i++){const nx=(idx+1)%N;const v=ring[idx];ring[idx]=.996*.5*(ring[idx]+ring[nx]);d[i]=v;idx=nx;}
+    bufCache[midi]=buf;
+  }
+  const src=c.createBufferSource();src.buffer=bufCache[midi];
+  const g=c.createGain();g.gain.value=gain===undefined?.32:gain;src.connect(g).connect(c.destination);
+  src.start(c.currentTime+(when||0));
+  setTimeout(()=>pulse(midi),Math.max(0,(when||0)*1000)+25);
+}
+function pulse(m){
+  document.querySelectorAll(`[data-midi="${m}"]`).forEach(el=>{
+    el.classList.remove('pulse');void el.getBoundingClientRect();el.classList.add('pulse');
+    el.addEventListener('animationend',()=>el.classList.remove('pulse'),{once:true});
+  });
+}
+function refTone(f,m){
+  const c=ac();const t=c.currentTime;const g=c.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(.28,t+.03);g.gain.setValueAtTime(.28,t+2);g.gain.exponentialRampToValueAtTime(.0001,t+2.6);g.connect(c.destination);
+  [[1,1],[2,.45],[3,.2],[4,.1]].forEach(([h,a])=>{const o=c.createOscillator();o.type='sine';o.frequency.value=f*h;const og=c.createGain();og.gain.value=a;o.connect(og).connect(g);o.start(t);o.stop(t+2.7);});
+  pulse(m);
+}
+function strum(fr){let k=0;fr.forEach((f,i)=>{if(f>=0){pluck(TUNING[i]+f,k*.045);k++;}});}
+function playRun(ps){const up=[...ps].sort((a,b)=>a-b);const seq=up.concat(up.slice(0,-1).reverse());seq.forEach((p,k)=>pluck(p,k*.2));}
+
+function enh(t){
+  const a=t.note.a,l=t.note.l;
+  const odd=Math.abs(a)>1||(l===2&&a===1)||(l===6&&a===1)||(l===3&&a===-1)||(l===0&&a===-1);
+  return odd?` (= ${SIMPLE[t.pc]})`:'';
+}
+const PLAY_ICON='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 1.8v12.4L14 8z" fill="currentColor"/></svg>';
+const seg=(withFinger)=>`<div class="seg" role="group" aria-label="Noktalarda ne yazsın">${(withFinger?[['finger','Parmak']]:[]).concat([['interval','Aralık'],['note','Nota']]).map(([id,n])=>`<button data-mode="${id}" aria-pressed="${st.mode===id}">${n}</button>`).join('')}</div>`;
+
+function render(){
+  if(['neck','gam','iv','map','triad','jam'].includes(st.tab)&&st.mode==='finger')st.mode='interval';
+  const c=chord();
+  const vs=voicings(c);
+  const filtered=st.rs==='all'?vs:vs.filter(v=>v.k===+st.rs);
+  if(st.vi>=filtered.length)st.vi=0;
+  const v=filtered[st.vi];
+  window._v=v;
+  let h='';
+  const TN=TUNINGS.find(t=>t.id===st.tun);
+  const cur=navFind(st.tab);
+  h+=`<div class="navbar"><span class="navlogo">${LOGO_SVG}</span><div class="navcur"><b class="nname">mizrapp</b><small>${cur.g.n} › ${cur.n}</small></div>${isAltTuning()?`<button class="navwarn" data-quick="tun" aria-label="Akort düzeni standart değil: ${tuningText(true)}">${WARN_ICON}<span>${shortTuning()}</span></button>`:''}<button class="menubtn" data-drawer="open" aria-label="Bölüm menüsünü aç">${MENU_ICON}Menü</button></div>`;
+  h+=`<div class="topbar"><button class="tool tpill${st.tab==='tun'?' on':''}${st.tun!=='std'||st.capo?' alt':''}" data-quick="tun" aria-label="Akort türü ve kapo">${TN.id==='std'?'E std':TN.n}${st.capo?`, kapo ${st.capo}`:''}</button><button class="tool${st.tab==='ritim'?' on':''}${rt.on==='met'||rt.on==='drum'?' alt':''}" data-quick="ritim"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 2.5h5l3.5 15h-12z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/><path d="M10 14 14.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M5.2 12.5h9.6" stroke="currentColor" stroke-width="1.4"/></svg>Ritim</button><button class="tool${st.tab==='tuner'?' on':''}" data-quick="tuner"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 2v7a3 3 0 0 0 6 0V2M10 12v6M7.5 18h5" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>Tuner</button><button class="tool ticon" data-theme-next="1" aria-label="Görünüm: ${THEMES.find(x=>x[0]===st.theme)[1]}" title="Görünüm: ${THEMES.find(x=>x[0]===st.theme)[1]}"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M10 3a7 7 0 0 1 0 14z" fill="currentColor"/></svg><span>${THEMES.find(x=>x[0]===st.theme)[1]}</span></button></div>`;
+  if(isAltTuning())h+=`<div class="tbanner" role="status">${WARN_ICON}<span>${tuningText(false)}</span><button data-quick="tun">Değiştir</button><button data-resettun="1">Standarda dön</button></div>`;
+  h+=`<div class="head"><div class="hl"><h1 class="sym">${c.sym}</h1><p class="trname">${solf(c.root)} ${c.T.tr}</p><div class="formula">Formül: ${c.tones.map(t=>t.lab).join(' – ')}</div>
+  ${st.capo?`<div class="formula" style="color:var(--root)">Kapo ${st.capo}: ${nn(ROOTS[(c.rootPc-st.capo+12)%12])}${c.T.sym} şekli çal</div>`:''}
+  ${v?`<button class="play" id="playBtn" aria-label="Akoru çal" style="margin-top:12px">${PLAY_ICON}Çal</button>`:''}</div>
+  ${v?`<div class="hero"><div class="herod">${diagram(c,v,true)}</div><div class="heronav"><button class="nav sm" data-vnav="-1" aria-label="Önceki basış" ${st.vi===0?'disabled':''}>‹</button><span>${st.vi+1}/${filtered.length}</span><button class="nav sm" data-vnav="1" aria-label="Sonraki basış" ${st.vi>=filtered.length-1?'disabled':''}>›</button></div><div class="herotab">${v.frets.map(f=>f<0?'x':f).join(' ')}</div></div>`:''}</div>`;
+  h+=`<div class="tones">${c.tones.map(t=>`<div class="tone" style="--c:var(--${t.cat})"><span class="tn">${t.nn}</span><span class="ti">${t.lab}</span><span class="tname">${t.name}${enh(t)}</span></div>`).join('')}</div>`;
+  h+=`<p class="pick-label">Kök ses</p><div class="roots">${ROOTS.map((r,i)=>`<button data-root="${i}" aria-pressed="${pcOf(r)===pcOf(st.root)}"><b>${nn(r)}</b><small>${solf(r).replace(' diyez','♯').replace(' bemol','♭')}</small></button>`).join('')}</div>`;
+  h+=`<p class="pick-label">Akor tipi</p><div class="types">${TYPES.map(t=>`<button data-type="${t.id}" aria-pressed="${t.id===st.type}">${t.chip}</button>`).join('')}</div>`;
+  h+=`<div id="tabTop"></div>`;
+
+  if(st.tab==='voicing'){
+    const groups=[0,1,2].map(k=>({k,n:vs.filter(x=>x.k===k).length})).filter(g=>g.n);
+    h+=`<div class="row">${seg(true)}</div>`;
+    h+=`<div class="row"><span class="pick-label" style="margin:0">Kök hangi telde:</span><div class="chips"><button data-rs="all" aria-pressed="${st.rs==='all'}">Tümü (${vs.length})</button>${groups.map(g=>`<button data-rs="${g.k}" aria-pressed="${st.rs===String(g.k)}">${6-g.k}. tel (${g.n})</button>`).join('')}</div></div>`;
+    if(!v){h+=`<div class="empty">Bu seçim için rahat basılabilen 4 telli bir şekil bulunamadı. Notaların sap üzerindeki yerini görmek için Sap sekmesini aç.</div>`;}
+    else{
+      h+=`<div class="stage"><button class="nav" id="prev" aria-label="Önceki basış" ${st.vi===0?'disabled':''}>‹</button>${diagram(c,v,false)}<button class="nav" id="next" aria-label="Sonraki basış" ${st.vi>=filtered.length-1?'disabled':''}>›</button></div>`;
+      h+=`<div class="count">${st.vi+1} / ${filtered.length}</div>`;
+      h+=`<div class="info">
+        <div class="tabline"><span class="lbl">Tel</span>${STR.map(s=>`<span class="h">${s}</span>`).join('')}<span class="lbl">Perde</span>${v.frets.map(f=>`<span class="f">${f<0?'x':f}</span>`).join('')}</div>
+        ${v.tname?`<p><b>Yaygın kalıp:</b> ${v.tname}${v.frets.includes(0)?' (açık teller)':v.barre?' (barre)':''}</p>`:''}
+        <p>Kök <b>${6-v.k}. telde</b> (${STR[v.k]} teli, ${v.frets[v.k]===0?'açık tel':v.frets[v.k]+'. perde'}).</p>
+        <p>${v.minF===0?'Tamamen açık teller.':v.maxF<=4?'Açık pozisyonda, ilk perdelerde.':v.minF+'. perdeden başlayan kaydırılabilir şekil.'}${v.barre?` İşaret parmağı ${v.barre.fret}. perdede barre yapıyor.`:''}</p>
+        ${v.minF>0&&!v.frets.includes(0)?`<p class="hint" style="margin-top:6px">Açık tel olmadığı için bu şekli sapta kaydırarak başka köklerde de kullanabilirsin.</p>`:''}
+      </div>`;
+    }
+  }
+  if(st.tab==='neck'){
+    h+=`<div class="row">${seg(false)}</div>`;
+    h+=`<div class="neck">${neck(c.byPc)}</div>`;
+    h+=`<p class="hint">${c.sym} akorunun sesleri 22. perdeye kadar bütün sapta. Bir noktaya dokununca o sesi duyarsın. Altın renkli noktalar kök sesler; şekiller hep bu noktaların etrafında kurulur.</p>`;
+  }
+  if(st.tab==='caged'){
+    const shapes=cagedShapes(c);
+    if(shapes&&!shapes.length){h+=`<div class="empty">CAGED şekilleri standart akora göre tanımlıdır; bu akortta geçerli değiller. Basışlar sekmesindeki hesaplanan şekilleri kullan.</div>`;}
+    else if(!shapes){
+      h+=`<div class="empty">CAGED şekilleri burada majör, minör ve dominant 7 akorları için gösteriliyor. ${c.sym} için Basışlar sekmesinde şekilleri kökün hangi telde olduğuna göre filtreleyebilirsin.</div>`;
+    }else{
+      h+=`<div class="row">${seg(true)}</div>`;
+      h+=`<p class="hint" style="margin:0 0 12px">Beş temel açık akor şekli, kök sesin yerine göre sapta yukarı kaydırılır. Açık tellerin yerini işaret parmağı (barre) alır. Şekiller sapta soldan sağa sırayla dizildi.</p>`;
+      h+=`<div class="caged">${shapes.map((s,i)=>`<div class="cg"><h3>${s.name} şekli</h3><p>Kök ${6-s.ref}. telde, ${s.r===0?'açık':s.r+'. perde'}</p>${diagram(c,s,true)}<div><button class="mini" data-cplay="${i}">Çal</button></div></div>`).join('')}</div>`;
+      window._shapes=shapes;
+    }
+  }
+  if(st.tab==='gam'){
+    const sd=scaleData();const bx=scaleBoxes(sd);window._boxes=bx;
+    const nF=22;const S=sd.S;
+    h+=`<div class="chips" style="margin-bottom:12px">${Object.entries(SCALES).map(([k,v])=>`<button data-scale="${k}" aria-pressed="${st.scale===k}">${v.chip}</button>`).join('')}</div>`;
+    h+=`<h2 class="sub">${sd.name}</h2><p class="hint" style="margin:0 0 6px">${S.info}</p>`;
+    h+=`<div class="mini-tones">${sd.tones.map(t=>`<span style="--c:var(--${t.cat})">${t.nn}<small>${t.lab}</small></span>`).join('')}</div>`;
+    h+=`<div class="row">${seg(false)}</div>`;
+    h+=`<div class="row"><span class="pick-label" style="margin:0">Kutular:</span><div class="chips"><button data-box="off" aria-pressed="${st.box==='off'}">Kapalı</button><button data-box="all" aria-pressed="${st.box==='all'}">Tümü</button>${[1,2,3,4,5].map(n=>`<button data-box="${n}" aria-pressed="${st.box===String(n)}">${n}</button>`).join('')}</div></div>`;
+    const o={nF};
+    if(st.box!=='off'){o.boxes=boxInstances(bx);if(st.box!=='all')o.sel=+st.box;}
+    h+=`<div class="neck">${neck(sd.byPc,o)}</div>`;
+    if(st.box!=='off'&&st.box!=='all'){
+      const b=bx.find(x=>x.num===+st.box);
+      h+=`<div class="boxview">${boxDiagram(sd,b)}<div class="info"><p><b>Kutu ${b.num}</b></p><p>${b.minF===0?'Açık tellerden':b.minF+'. perdeden'} ${b.maxF}. perdeye kadar. ${S.pent?'Pentatonik kutusuna eklenen sesler bu pozisyonu tamamlar.':'Her telde iki ses var.'}</p><p class="hint">Kalın E telinde ${sd.byPc[b.notes[0].p%12].nn} (${sd.byPc[b.notes[0].p%12].lab}) sesiyle başlar.</p><div class="actions"><button class="ghost" id="boxPlay">${'Kutuyu çal'}</button></div></div></div>`;
+    }else{
+      h+=`<div class="actions" style="margin-top:12px"><button class="ghost" id="scalePlay">Gamı çal</button></div>`;
+    }
+    let relTxt='';
+    if(S.rel){const rn=spell(st.root,S.rel[1],S.rel[2]);relTxt=` ${sd.name} ile ${nn(rn)} ${SCALES[S.rel[0]].name} aynı sesleri kullanır; şekiller aynı kalır, sadece kök değişir. <button class="link" id="relScale">Geç: ${nn(rn)} ${SCALES[S.rel[0]].name}</button>`;}
+    h+=`<p class="hint">Beş pozisyon sapı birbirine bağlar: birinin sağ kenarı sonrakinin sol kenarıdır. 12. perdeden sonra aynı şekiller bir oktav yukarıda tekrar eder.${relTxt}</p>`;
+    h+=`<p class="hint">Kök ses ve kutu dışındaki notalar soluk gösterilir. Bir noktaya dokununca o sesi duyarsın.</p>`;
+  }
+  if(st.tab==='cof'){
+    const dia=diatonic();window._dia=dia;
+    h+=`<div class="cof">${circle()}</div>`;
+    h+=`<p class="hint" style="margin-top:0">Dış halka majör, iç halka ilgili minör tonlar. Saat yönünde her adım bir beşli yukarı ve bir diyez fazla. Bir dilime dokununca o ton seçilir ve akor çalınır. Vurgulu dilimler seçili tonun ana akor ailesi.</p>`;
+    h+=`<p class="pick-label" style="margin-top:14px">${nn(st.key)} ${st.key.minor?'minör':'majör'} tonunun akorları</p>`;
+    h+=`<div class="dia">${dia.map((d,j)=>`<button data-dia="${j}" aria-pressed="${pcOf(d.note)===pcOf(st.root)&&d.type===st.type}"><small>${d.rn}</small><b>${d.sym}</b></button>`).join('')}</div>`;
+    h+=`<div class="actions"><button class="ghost" id="keyPenta">${nn(st.key)} ${st.key.minor?'minör':'majör'} pentatoniği aç</button></div>`;
+  }
+  if(st.tab==='sum'){
+    h+=`<div class="tbl"><table><thead><tr><th>Akor</th><th>Formül</th><th>Sesler</th><th>Adı</th></tr></thead><tbody>${TYPES.map(T=>{
+      const notes=T.iv.map(k=>nn(spell(c.root,I[k].d,I[k].s)));
+      return `<tr data-row="${T.id}" aria-current="${T.id===st.type}"><td class="s">${nn(c.root)}${T.sym}</td><td>${T.iv.map(k=>I[k].lab).join(' ')}</td><td><b>${notes.join(' ')}</b></td><td>${T.tr}</td></tr>`;}).join('')}</tbody></table></div>`;
+    h+=`<p class="hint">Bir satıra dokununca o akor seçilir ve basışları açılır.</p>`;
+  }
+  if(st.tab==='famous'){
+    if(!uniformTuning()||st.capo)h+=`<p class="tnote">Bu basışlar standart akort ve kapo olmadan verilmiştir.</p>`;
+    h+=`<div class="row">${seg(true)}</div>`;
+    h+=FAMOUS.map((F,i)=>{
+      const T=TYPES.find(t=>t.id===F.type);const cc={root:F.root,T,...tonesFor(F.root,T.iv),sym:nn(F.root)+T.sym};
+      const v=pinV(F.fr);
+      return `<section class="card famous"><div class="fhead"><div><h2 class="sub">${F.n}</h2><p class="who">${F.who}</p></div><div class="fsym">${cc.sym}</div></div>
+      <div class="fbody">${diagram(cc,v,true)}<div><div class="mini-tones">${cc.tones.map(t=>`<span style="--c:var(--${t.cat})">${t.nn}<small>${t.lab}</small></span>`).join('')}</div><p class="fd">${F.d}</p></div></div>
+      <div class="actions"><button class="ghost" data-fplay="${i}">Çal</button><button class="ghost" data-fsel="${i}">Akoru incele</button></div></section>`;
+    }).join('');
+  }
+  if(st.tab==='iv')h+=intervalUI(c);
+  if(st.tab==='map')h+=mapUI(c);
+  if(st.tab==='triad')h+=mapUI(c,'tri');
+  if(st.tab==='jam')h+=jamUI();
+  if(st.tab==='setup')h+=setupUI();
+  if(st.tab==='tuner')h+=tunerUI();
+  if(st.tab==='finder')h+=finderUI();
+  if(st.tab==='tun')h+=tunUI(c);
+  if(st.tab==='arp')h+=arpUI(c);
+  if(st.tab==='strum')h+=strumUI(c);
+  if(st.tab==='shapes')h+=shapesUI(c);
+  if(st.tab==='ritim')h+=rhythmUI();
+  if(rt.on)h+=bar();
+  if(!['cof','ritim','jam','setup','tuner','finder','tun','strum'].includes(st.tab))h+=`<div class="legend">${[['root','kök'],['third','üçlü'],['fifth','beşli'],['seventh','yedili'],['ext','2, 4, 6, 9']].map(([c,n])=>`<span style="--c:var(--${c})"><i></i>${n}</span>`).join('')}</div>`;
+  document.getElementById('app').innerHTML=h;
+}
+
+
+/* ---------- Ritim: metronom ve davul ---------- */
+const SIGS={
+ '2/4':[2,0],'3/4':[2,0,0],'4/4':[2,0,0,0],'5/4':[2,0,0,1,0],
+ '6/8':[2,0,0,1,0,0],'7/8':[2,0,1,0,1,0,0],'9/8':[2,0,1,0,1,0,1,0,0],'12/8':[2,0,0,1,0,0,1,0,0,1,0,0]
+};
+const SUBS=[[1,'Dörtlük'],[2,'Sekizlik'],[3,'Triole'],[4,'Onaltılık']];
+const TRK={k:'Bas davul',s:'Trampet',r:'Rim',h:'Hi-hat',oh:'Açık hi-hat',t:'Tom',e:'Shaker'};
+const PATS=[
+ {n:'Rock',sig:'4/4',spb:4,tr:{k:'x.......x.x.....',s:'....x.......x...',h:'x.x.x.x.x.x.x.x.'}},
+ {n:'Pop',sig:'4/4',spb:4,tr:{k:'x.....x.x.......',s:'....x.......x...',h:'x.o.x.o.x.o.x.o.'}},
+ {n:'Disko',sig:'4/4',spb:4,tr:{k:'x...x...x...x...',s:'....x.......x...',h:'x...x...x...x...',oh:'..x...x...x...x.'}},
+ {n:'Funk',sig:'4/4',spb:4,tr:{k:'x..x..x...x..x..',s:'....x..o.o..x..o',h:'xoxoxoxoxoxoxoxo'}},
+ {n:'Hip-hop',sig:'4/4',spb:4,tr:{k:'x......x..x.....',s:'....x.......x...',h:'x.x.x.x.x.x.xxx.'}},
+ {n:'Halftime',sig:'4/4',spb:4,tr:{k:'x.........x.....',s:'........x.......',h:'x.x.x.x.x.x.x.x.'}},
+ {n:'Metal (çift pedal)',sig:'4/4',spb:4,tr:{k:'xxxxxxxxxxxxxxxx',s:'....x.......x...',h:'x...x...x...x...'}},
+ {n:'Reggae (one drop)',sig:'4/4',spb:4,tr:{k:'........x.......',r:'........x.......',h:'x.o.x.o.x.o.x.o.'}},
+ {n:'Shuffle',sig:'12/8',spb:3,tr:{k:'x.....x.....',s:'...x.....x..',h:'x.xx.xx.xx.x'}},
+ {n:'Slow blues',sig:'12/8',spb:3,tr:{k:'x.....x.....',s:'...x.....x..',h:'xooxooxooxoo'}},
+ {n:'6/8 balad',sig:'6/8',spb:3,tr:{k:'x.....',s:'...x..',h:'xooxoo'}},
+ {n:'Vals',sig:'3/4',spb:2,tr:{k:'x.....',s:'..o.o.',h:'x.x.x.'}},
+ {n:'Bossa nova',sig:'4/4',spb:4,tr:{k:'x..xx..xx..xx..x',r:'x..x..x...x..x..',e:'xoxoxoxoxoxoxoxo'}},
+ {n:'Samba',sig:'4/4',spb:4,tr:{k:'o...x...o...x...',r:'x.x..x.x.x.x..x.',e:'xooxxooxxooxxoox'}},
+ {n:'Maksum',sig:'4/4',spb:4,tr:{k:'x.......x.......',s:'..x...x.....x...',e:'x.o.x.o.x.o.x.o.'}},
+ {n:'Karşılama 9/8',sig:'9/8',spb:4,tr:{k:'x.......x.........',s:'....x.......x.x...',e:'x.o.x.o.x.o.x.o.x.'}}
+];
+const rt={on:null,timer:null,next:0,step:0,queue:[],taps:[]};
+let master,noiseBuf;
+function out(){if(!master){master=ctx.createGain();master.gain.value=.9;master.connect(ctx.destination);}return master;}
+function noise(){if(!noiseBuf){const len=ctx.sampleRate;noiseBuf=ctx.createBuffer(1,len,ctx.sampleRate);const d=noiseBuf.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;}return noiseBuf;}
+function env(g,t,v,dec){g.gain.setValueAtTime(Math.max(v,.002),t);g.gain.exponentialRampToValueAtTime(.001,t+dec);}
+function osc(t,v,type,f0,f1,sweep,dec){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f0,t);if(f1)o.frequency.exponentialRampToValueAtTime(f1,t+sweep);env(g,t,v,dec);o.connect(g).connect(out());o.start(t);o.stop(t+dec+.05);}
+function noiseHit(t,v,type,freq,dec,q){const s=ctx.createBufferSource();s.buffer=noise();const f=ctx.createBiquadFilter();f.type=type;f.frequency.value=freq;if(q)f.Q.value=q;const g=ctx.createGain();env(g,t,v,dec);s.connect(f).connect(g).connect(out());s.start(t);s.stop(t+dec+.05);}
+const SND={
+  k:(t,v)=>osc(t,.95*v,'sine',150,45,.12,.42),
+  s:(t,v)=>{noiseHit(t,.55*v,'highpass',1200,.18);osc(t,.35*v,'triangle',190,0,0,.1);},
+  r:(t,v)=>{noiseHit(t,.3*v,'bandpass',1800,.04,4);osc(t,.25*v,'square',1700,0,0,.03);},
+  h:(t,v)=>noiseHit(t,.3*v,'highpass',7500,.05),
+  oh:(t,v)=>noiseHit(t,.28*v,'highpass',7000,.32),
+  t:(t,v)=>osc(t,.7*v,'sine',210,110,.2,.3),
+  e:(t,v)=>noiseHit(t,.16*v,'bandpass',6500,.06,1.5)
+};
+function click(t,level){
+  const f=level===2?1700:level===1?1300:level===-1?850:1050;
+  osc(t,level===-1?.2:level===2?.6:.45,'sine',f,0,0,.04);
+}
+function startRt(kind){ac();stopRt(true);rt.on=kind;rt.step=0;rt.jb=0;st.jbar=0;rt.sbar=0;rt.bt=false;rt.next=ctx.currentTime+.08;rt.timer=setInterval(sched,25);sched();requestAnimationFrame(draw);render();}
+function stopRt(silent){clearInterval(rt.timer);rt.timer=null;rt.on=null;rt.queue=[];if(!silent)render();}
+function sched(){
+  while(rt.next<ctx.currentTime+.12){
+    const t=rt.next;
+    if(rt.on==='met'){
+      const acc=SIGS[st.sig];const sub=st.sig.endsWith('/8')?1:st.sub;const total=acc.length*sub;
+      rt.step%=total;
+      const beat=Math.floor(rt.step/sub),sb=rt.step%sub;
+      click(t,sb===0?acc[beat]:-1);
+      if(sb===0)rt.queue.push({t,beat});
+      rt.next+=60/st.bpm/sub;rt.step=(rt.step+1)%total;
+    }else if(rt.on==='jam'){jamSched(t);
+    }else if(rt.on==='strum'){strumSched(t);
+    }else{
+      const p=PATS[st.pat];const len=Object.values(p.tr)[0].length;
+      rt.step%=len;
+      for(const [k,pat] of Object.entries(p.tr)){const ch=pat[rt.step];if(ch==='x')SND[k](t,1);else if(ch==='o')SND[k](t,.45);}
+      rt.queue.push({t,col:rt.step});
+      rt.next+=60/st.bpm/p.spb;rt.step=(rt.step+1)%len;
+    }
+  }
+}
+function draw(){
+  if(!rt.on)return;
+  let cur=null;while(rt.queue.length&&rt.queue[0].t<=ctx.currentTime)cur=rt.queue.shift();
+  if(cur){
+    if(cur.jbar===undefined&&cur.sbar===undefined)document.querySelectorAll('.lit').forEach(e=>e.classList.remove('lit'));
+    if(cur.beat!==undefined){const el=document.getElementById('beat'+cur.beat);if(el)el.classList.add('lit');}
+    if(cur.col!==undefined)document.querySelectorAll(`[data-col="${cur.col}"]`).forEach(e=>e.classList.add('lit'));
+    if(cur.jbar!==undefined)jamUpdate(cur.jbar);
+    if(cur.slot!==undefined){const el=document.querySelector(`[data-slot="${cur.slot}"]`);if(el)el.classList.add('lit');}
+    if(cur.sbar!==undefined){const el=document.getElementById('strumChord');if(el&&st.sprog){const ch=strumChord();el.textContent=`${JAM[st.jam].n}: ${ch.sym}`;}}
+  }
+  requestAnimationFrame(draw);
+}
+function tempoBox(){
+  return `<div class="tempo"><button class="nav" data-bpm="-5" aria-label="Tempoyu 5 düşür">−</button>
+  <div class="bpmwrap"><div class="bpmnum"><span id="bpmVal">${st.bpm}</span> <small>BPM</small></div>
+  <input type="range" id="bpm" min="30" max="240" value="${st.bpm}" aria-label="Tempo"></div>
+  <button class="nav" data-bpm="5" aria-label="Tempoyu 5 artır">+</button></div>
+  <div class="actions" style="justify-content:center"><button class="ghost" id="tap">Vuruşla tempo bul</button><button class="ghost" data-bpm="-1">−1</button><button class="ghost" data-bpm="1">+1</button></div>`;
+}
+function rhythmUI(){
+  const acc=SIGS[st.sig];const eighth=st.sig.endsWith('/8');
+  const p=PATS[st.pat];const len=Object.values(p.tr)[0].length;
+  let h=tempoBox();
+  h+=`<section class="card"><div class="cardhead"><h2 class="sub">Metronom</h2><button class="play" id="metBtn">${rt.on==='met'?'Durdur':PLAY_ICON+'Başlat'}</button></div>`;
+  h+=`<div class="beats">${acc.map((a,i)=>`<span id="beat${i}" class="${a===2?'acc':a===1?'acc2':''}">${i+1}</span>`).join('')}</div>`;
+  h+=`<p class="pick-label">Ölçü</p><div class="chips" style="margin-bottom:12px">${Object.keys(SIGS).map(k=>`<button data-sig="${k}" aria-pressed="${st.sig===k}">${k}</button>`).join('')}</div>`;
+  if(!eighth)h+=`<p class="pick-label">Bölüm</p><div class="chips">${SUBS.map(([n,l])=>`<button data-sub="${n}" aria-pressed="${st.sub===n}">${l}</button>`).join('')}</div>`;
+  else h+=`<p class="hint" style="margin:0">/8 ölçülerde tempo sekizlik nota üzerinden sayılır. Vurgular ${st.sig==='7/8'?'2+2+3':st.sig==='9/8'?'2+2+2+3 (aksak)':'3+3'} gruplamasını gösterir.</p>`;
+  h+=`</section>`;
+  h+=`<section class="card"><div class="cardhead"><h2 class="sub">Davul</h2><button class="play" id="drumBtn">${rt.on==='drum'?'Durdur':PLAY_ICON+'Başlat'}</button></div>`;
+  h+=`<div class="chips" style="margin-bottom:12px">${PATS.map((q,i)=>`<button data-pat="${i}" aria-pressed="${st.pat===i}">${q.n}</button>`).join('')}</div>`;
+  h+=`<p class="hint" style="margin:0 0 8px">${p.n}: ${p.sig}, ${p.sig.endsWith('/8')&&p.spb===3?'tempo noktalı dörtlüğe göre':'tempo dörtlük notaya göre'}. Koyu kare vuruş, açık kare hafif vuruş.</p>`;
+  h+=`<div class="grid-wrap"><div class="dgrid" style="grid-template-columns:76px repeat(${len},minmax(14px,1fr))">`;
+  for(const [k,pat] of Object.entries(p.tr)){
+    h+=`<span class="tl">${TRK[k]}</span>`;
+    h+=[...pat].map((ch,i)=>`<i data-col="${i}" class="${ch==='x'?'on':ch==='o'?'soft':''}${i%p.spb===0?' bt':''}"></i>`).join('');
+  }
+  h+=`</div></div></section>`;
+  return h;
+}
+function bar(){
+  const txt=rt.on==='met'?`Metronom, ${st.sig}`:rt.on==='jam'?`Eşlik, ${nn(st.root)} ${JAM[st.jam].n}`:rt.on==='strum'?`Tıngırdatma, ${STRUMS[st.pat2].n}`:`Davul, ${PATS[st.pat].n}`;
+  return `<div class="tbar"><span>${txt} <b id="barBpm">${st.bpm}</b> BPM</span><button class="ghost" data-bpm="-5" aria-label="Tempoyu düşür">−</button><button class="ghost" data-bpm="5" aria-label="Tempoyu artır">+</button><button class="play" id="stopRt">Durdur</button></div>`;
+}
+function setBpm(v){
+  st.bpm=Math.max(30,Math.min(240,Math.round(v)));
+  const a=document.getElementById('bpmVal');if(a)a.textContent=st.bpm;
+  const b=document.getElementById('barBpm');if(b)b.textContent=st.bpm;
+  const r=document.getElementById('bpm');if(r&&+r.value!==st.bpm)r.value=st.bpm;
+}
+document.getElementById('app').addEventListener('input',e=>{if(e.target.id==='bpm')setBpm(+e.target.value);if(e.target.id==='capoIn'){st.capoSong=e.target.value;const o=document.getElementById('capoOut');if(o)o.innerHTML=capoTable();return;}const k=e.target.dataset&&e.target.dataset.su;if(k){st.su[k]=e.target.value===''?'':e.target.value;saveSu();updEval(k);}});
+
+
+/* ---------- Aralıklar ---------- */
+const IVT=[
+ {s:0,cat:'tam',ab:'P1',nm:'tam birli',d:1,alt:['d2','eksik ikili',2],map:'KÖK'},
+ {s:1,cat:'kucuk',ab:'m2',nm:'küçük ikili',d:2,alt:['A1','artık birli',1],map:'♭9',ext:'♭2 / ♭9'},
+ {s:2,cat:'buyuk',ab:'M2',nm:'büyük ikili',d:2,alt:['d3','eksik üçlü',3],map:'9',ext:'2 / 9'},
+ {s:3,cat:'kucuk',ab:'m3',nm:'küçük üçlü',d:3,alt:['A2','artık ikili',2],map:'♭3/♯9',ext:'♭3 (minör üçlü)'},
+ {s:4,cat:'buyuk',ab:'M3',nm:'büyük üçlü',d:3,alt:['d4','eksik dörtlü',4],map:'3',ext:'3 (majör üçlü)'},
+ {s:5,cat:'tam',ab:'P4',nm:'tam dörtlü',d:4,alt:['A3','artık üçlü',3],map:'4/11',ext:'4 / 11'},
+ {s:6,cat:'tri',ab:'A4',nm:'artık dörtlü',d:4,alt:['d5','eksik beşli',5],map:'♭5/♯11',ext:'♯11 / ♭5, triton'},
+ {s:7,cat:'tam',ab:'P5',nm:'tam beşli',d:5,alt:['d6','eksik altılı',6],map:'5'},
+ {s:8,cat:'kucuk',ab:'m6',nm:'küçük altılı',d:6,alt:['A5','artık beşli',5],map:'♯5/♭13',ext:'♭6 / ♭13'},
+ {s:9,cat:'buyuk',ab:'M6',nm:'büyük altılı',d:6,alt:['d7','eksik yedili',7],map:'6/13',ext:'6 / 13'},
+ {s:10,cat:'kucuk',ab:'m7',nm:'küçük yedili',d:7,alt:['A6','artık altılı',6],map:'♭7',ext:'♭7 (dominant yedili)'},
+ {s:11,cat:'buyuk',ab:'M7',nm:'büyük yedili',d:7,alt:['d8','eksik sekizli',8],map:'7',ext:'7 (majör yedili)'},
+ {s:12,cat:'tam',ab:'P8',nm:'tam sekizli (oktav)',d:8,alt:['A7','artık yedili',7],map:'KÖK'}
+];
+const IVCOL={tam:'var(--fifth)',buyuk:'var(--third)',kucuk:'var(--seventh)',tri:'var(--ext)'};
+function mapCat(s){return {0:'root',3:'third',4:'third',6:'fifth',7:'fifth',8:'fifth',10:'seventh',11:'seventh'}[s]||'ext';}
+
+/* Genel klavye çizici */
+function fb(o){
+  const from=o.from||0,to=o.to,L=40,fw=o.fw||46,T=(o.top||0)+20,sh=o.sh||30;
+  const ncol=from===0?to:to-from+1;
+  const W=L+fw*ncol+16,H=T+sh*5+40;
+  const xf=f=>from===0?(f===0?L-18:L+fw*(f-.5)):L+fw*(f-from+.5);
+  const y=i=>T+sh*(5-i);
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${o.aria||'Klavye'}">`;
+  s+=`<rect x="${L}" y="${T-12}" width="${fw*ncol}" height="${sh*5+24}" fill="var(--board)" rx="3"/>`;
+  for(let f=Math.max(1,from);f<=to;f++){
+    if([3,5,7,9,15,17,19,21].includes(f))s+=`<circle cx="${xf(f)}" cy="${T+sh*2.5}" r="5" fill="#EFE6D2" opacity=".2"/>`;
+    if(f===12)s+=`<circle cx="${xf(f)}" cy="${T+sh*1.5}" r="5" fill="#EFE6D2" opacity=".2"/><circle cx="${xf(f)}" cy="${T+sh*3.5}" r="5" fill="#EFE6D2" opacity=".2"/>`;
+  }
+  for(let k=0;k<=ncol;k++){const nut=from===0&&k===0;s+=`<line x1="${L+fw*k}" x2="${L+fw*k}" y1="${T-12}" y2="${T+sh*5+12}" stroke="${nut?'var(--bone)':'var(--fret)'}" stroke-width="${nut?7:2}"/>`;}
+  for(let i=0;i<6;i++)s+=`<line x1="${L}" x2="${L+fw*ncol}" y1="${y(i)}" y2="${y(i)}" stroke="var(--string)" stroke-width="${(2.4-i*.32).toFixed(2)}"/><text x="6" y="${y(i)+5}" font-size="13" font-weight="${o.hiStr===i?700:400}" fill="${o.hiStr===i?'var(--ink)':'var(--muted)'}">${STR[i]}</text>`;
+  for(let f=Math.max(1,from);f<=to;f++)s+=`<text x="${xf(f)}" y="${H-6}" text-anchor="middle" font-size="12" fill="var(--muted)">${f}</text>`;
+  (o.bands||[]).forEach(b=>{const x1=xf(b.from)-fw/2+3,x2=xf(b.to)+fw/2-3;s+=`<rect x="${x1}" y="${T-14}" width="${x2-x1}" height="${sh*5+28}" rx="8" fill="${b.col}" fill-opacity=".2" stroke="${b.col}" stroke-width="1.5"/>`;if(b.lab)s+=`<text x="${(x1+x2)/2}" y="${T-18-(b.alt?13:0)}" text-anchor="middle" font-size="11.5" font-weight="700" fill="${b.col}">${b.lab}</text>`;});
+  (o.lines||[]).forEach(l=>s+=`<line x1="${xf(l[1])}" y1="${y(l[0])}" x2="${xf(l[3])}" y2="${y(l[2])}" stroke="${l[4]}" stroke-width="3" stroke-dasharray="${l[5]?'5 4':'0'}" stroke-linecap="round" opacity=".9"/>`);
+  (o.dots||[]).forEach(d=>{
+    const x=xf(d.f),yy=y(d.i),col=d.col||`var(--${d.cat||'ext'})`,txt=(d.cat==='root'&&!d.col)?'#2A1C05':'#fff';
+    const attr=d.midi!==undefined?`data-midi="${d.midi}" style="cursor:pointer"`:'';
+    s+=`<g ${attr} opacity="${d.op===undefined?1:d.op}">`;
+    if(d.pill){const w=fw-6;s+=`<rect x="${x-w/2}" y="${yy-11}" width="${w}" height="22" rx="6" fill="${col}"/><text x="${x}" y="${yy+4}" text-anchor="middle" font-size="${d.lab.length>4?9.5:11}" font-weight="700" fill="${txt}" pointer-events="none">${d.lab}</text>`;}
+    else{const r=d.r||11;s+=`<circle cx="${x}" cy="${yy}" r="${r}" fill="${col}" ${d.ring?'stroke="#fff" stroke-width="2.5"':d.cat==='root'?'stroke="var(--bone)" stroke-width="2"':''} ${d.dash?'stroke-dasharray="3 2"':''}/>`;if(d.lab)s+=`<text x="${x}" y="${yy+4.5}" text-anchor="middle" font-size="${d.lab.length>2?10:d.lab.length>1?11.5:13}" font-weight="700" fill="${txt}" pointer-events="none">${d.lab}</text>`;}
+    s+='</g>';
+  });
+  return s+'</svg>';
+}
+
+function intervalUI(c){
+  const root=c.root,rpc=c.rootPc;
+  let h=`<h2 class="sub">Aralık tablosu</h2><p class="hint" style="margin:0 0 10px">Kök ${nn(root)} için her yarım ses adımında hangi aralık ve hangi nota var. Aynı perdeye birden fazla ad düşebilir; hangisinin kullanılacağı akorun ya da gamın yazımına göre değişir. Bir satıra dokununca önce kök, sonra aralık, sonra ikisi birlikte çalar.</p>`;
+  h+=`<div class="ivlist">${IVT.map(r=>{
+    const n1=nn(spell(root,r.d,r.s)),n2=nn(spell(root,r.alt[2],r.s));
+    return `<button class="ivrow" data-ivs="${r.s}" style="--c:${IVCOL[r.cat]}"><span class="ivn">${r.s}</span><span class="ivm"><b>${r.nm}</b> <small>${r.ab}${r.ext?', '+r.ext:''}</small><br><span class="ivalt">Eşdeğer ad: ${r.alt[1]} (${r.alt[0]}), ${n2}</span></span><span class="ivnote">${n1}</span></button>`;}).join('')}</div>`;
+  h+=`<div class="legend" style="margin:10px 0 0">${[['tam','tam'],['buyuk','büyük'],['kucuk','küçük'],['tri','triton']].map(([k,n])=>`<span style="--c:${IVCOL[k]}"><i></i>${n}</span>`).join('')}</div>`;
+  h+=`<p class="hint">Kural: büyük bir aralık yarım ses küçülürse küçük, küçük aralık yarım ses daha küçülürse eksik olur. Tam ya da büyük aralık yarım ses büyürse artık olur. 9, 11 ve 13 aslında 2, 4 ve 6'nın bir oktav üstüdür.</p>`;
+
+  /* Kök teline göre aralık haritası */
+  const k=st.rstr;let r=((rpc-TUNING[k])%12+12)%12;if(r<3)r+=12;
+  const from=r-3,to=r+3;
+  const dots=[];
+  for(let i=0;i<6;i++)for(let f=from;f<=to;f++){
+    const midi=TUNING[i]+f;const sm=((midi%12)-rpc+12)%12;const R=IVT[sm];
+    const inCh=st.ihl==='all'||c.byPc[midi%12];
+    dots.push({i,f,pill:true,cat:mapCat(sm),lab:st.mode==='note'?nn(spell(root,R.d,R.s)):R.map,op:inCh?1:.18,midi});
+  }
+  h+=`<h2 class="sub" style="margin-top:22px">Kök teline göre aralık haritası</h2>`;
+  h+=`<div class="row"><div class="chips">${[0,1,2].map(i=>`<button data-rstr="${i}" aria-pressed="${k===i}">Kök ${6-i}. telde</button>`).join('')}</div></div>`;
+  h+=`<div class="row"><div class="seg" role="group" aria-label="Etiket"><button data-mode="interval" aria-pressed="${st.mode!=='note'}">Aralık</button><button data-mode="note" aria-pressed="${st.mode==='note'}">Nota</button></div><div class="chips"><button data-ihl="all" aria-pressed="${st.ihl==='all'}">Tüm aralıklar</button><button data-ihl="ch" aria-pressed="${st.ihl==='ch'}">Sadece ${c.sym}</button></div></div>`;
+  h+=`<div class="neck">${fb({from,to,fw:52,dots,hiStr:k,aria:'Aralık haritası'})}</div>`;
+  h+=`<p class="hint">Kök ${nn(root)}, ${6-k}. telin ${r}. perdesinde. Bu kalıp sabittir: kökü hangi perdeye taşırsan taşı, çevresindeki aralıklar aynı yerlerde durur. "Sadece ${c.sym}" seçilince seçili akorun sesleri öne çıkar; akor şeklinin bu haritadan nasıl çıktığını görürsün. Hücrelere dokununca ses çalar.</p>`;
+  return h;
+}
+
+/* ---------- Klavye haritası derlemesi ---------- */
+const CYCLE=[{l:5,a:0},{l:1,a:0},{l:4,a:0},{l:0,a:0},{l:3,a:0},{l:6,a:-1},{l:2,a:-1},{l:5,a:-1},{l:1,a:-1},{l:4,a:-1},{l:6,a:0},{l:2,a:0}];
+const TRI={maj:['R','M3','P5'],m:['R','b3','P5'],dim:['R','b3','b5'],aug:['R','M3','s5']};
+const TRIN={maj:'Majör',m:'Minör',dim:'Eksik',aug:'Artık'};
+const INVN=['Kök','1. çevrim','2. çevrim'];
+const INVC=['var(--root)','var(--third)','var(--fifth)'];
+const MAP_SECTIONS=[['notes','Notalar'],['ref','Referans perdeler'],['uni','Aynı nota'],['oct','Oktavlar'],['tri','Triadlar'],['shape','Şekil kaydırma'],['prog','I–IV–V'],['quiz','Alıştırma']];
+function rootOf(pc){return ROOTS[((pc%12)+12)%12];}
+function posOn(i,pc,min){let f=((pc-TUNING[i])%12+12)%12;while(f<(min||0))f+=12;return f;}
+
+function triadShapes(root,q,set){
+  const tf=tonesFor(root,TRI[q]);const pcs=tf.tones.map(t=>t.pc);
+  const perms=[[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]];const seen=new Set();const out=[];
+  for(const p of perms){
+    const opts=[0,1,2].map(j=>{const b=((pcs[p[j]]-TUNING[set+j])%12+12)%12;return [b,b+12,b+24].filter(f=>f<=22);});
+    for(const a of opts[0])for(const b of opts[1])for(const cc of opts[2]){
+      const fr=[a,b,cc];const mx=Math.max(...fr),mn=Math.min(...fr);if(mx-mn>3)continue;
+      const key=fr.join(',');if(seen.has(key))continue;seen.add(key);
+      out.push({fr,inv:p[0],minF:mn,maxF:mx});
+    }
+  }
+  return {tf,list:out.sort((x,y)=>x.minF-y.minF)};
+}
+
+function mapUI(c,only){
+  if(only){const sv=st.ms;st.ms=only;let r;try{r=mapUI(c);}finally{st.ms=sv;}return r.replace(/^<div class="chips" style="margin-bottom:14px">.*?<\/div>/,'');}
+  let h=`<div class="chips" style="margin-bottom:14px">${MAP_SECTIONS.map(([id,n])=>`<button data-ms="${id}" aria-pressed="${st.ms===id}">${n}</button>`).join('')}</div>`;
+  const root=c.root,rpc=c.rootPc;
+  const card=(t,body)=>`<section class="card" style="margin-top:0"><h2 class="sub" style="margin:0 0 6px">${t}</h2>${!uniformTuning()&&['ref','uni','oct','shape'].includes(st.ms)?'<p class="tnote">Buradaki açıklamalar standart akora göredir; diyagramlar seçili akorda hesaplanır.</p>':''}${body}</section>`;
+  if(st.ms==='notes'){
+    const dots=[];
+    for(let i=0;i<6;i++)for(let f=0;f<=12;f++){
+      const pc=(TUNING[i]+f)%12;const nat=LETTER_PC.indexOf(pc);
+      if(nat<0&&st.ntm==='nat')continue;
+      const lab=nat>=0?LETTERS[nat]:(st.ntm==='flat'?SIMPLE[pc].replace('C♯','D♭').replace('F♯','G♭'):['C♯','C♯','D♯','D♯','E','F','F♯','F♯','G♯','G♯','A♯','A♯'][pc]);
+      dots.push({i,f,lab,col:nat>=0?'var(--ink)':'var(--muted)',op:nat>=0?1:.85,midi:TUNING[i]+f,r:nat>=0?11:10});
+    }
+    dots.forEach(d=>{if(d.col==='var(--ink)')d.col='#2B3640';});
+    h+=card('Teller ve notalar',`<p class="fd">Teller kalından inceye E A D G B E. Akılda kalsın diye: <b>E</b>ski <b>A</b>rabalar <b>D</b>ağ <b>G</b>ibi <b>B</b>üyük <b>E</b>ngeller. 6. ve 1. tel ikisi de E olduğu için notaları birebir aynı dizilir; aslında öğrenilecek beş tel var.</p>
+    <div class="row" style="margin-top:10px"><div class="seg"><button data-ntm="nat" aria-pressed="${st.ntm==='nat'}">Doğal</button><button data-ntm="sharp" aria-pressed="${st.ntm==='sharp'}">♯ ile</button><button data-ntm="flat" aria-pressed="${st.ntm==='flat'}">♭ ile</button></div></div>
+    <div class="neck">${fb({from:0,to:12,dots})}</div>
+    <p class="fd" style="margin-top:8px">Müzik alfabesi yedi harftir: A B C D E F G, sonra başa döner. Harfler arası çoğunlukla iki perdedir (tam ses). İstisna B–C ve E–F: bunlar yan yanadır (yarım ses). Aradaki boşluklar diyez ya da bemolle adlandırılır; C♯ ile D♭ aynı perdedir. 12. perdede her tel kendi açık notasına bir oktav yukarıda döner.</p>`);
+  }
+  if(st.ms==='ref'){
+    const p=st.refp;const dots=[],lines=[];
+    if(p===5){for(let i=0;i<6;i++){const f=i===3?4:5;dots.push({i,f,lab:SIMPLE[(TUNING[i]+f)%12],cat:'third',midi:TUNING[i]+f});if(i<5){dots.push({i:i+1,f:0,lab:STR[i+1],cat:'ext',midi:TUNING[i+1]});lines.push([i,f,i+1,0,'var(--third)',true]);}}}
+    if(p===7){for(let i=0;i<6;i++){const f=7;dots.push({i,f,lab:SIMPLE[(TUNING[i]+f)%12],cat:'fifth',midi:TUNING[i]+f});}
+      for(let i=0;i<5;i++){const f=i===3?8:7;dots.push({i:i+1,f,lab:SIMPLE[(TUNING[i])%12],cat:'seventh',midi:TUNING[i+1]+f});lines.push([i,0,i+1,f,'var(--seventh)',true]);dots.push({i,f:0,lab:STR[i],cat:'ext',midi:TUNING[i]});}}
+    if(p===12){for(let i=0;i<6;i++){dots.push({i,f:0,lab:STR[i],cat:'ext',midi:TUNING[i]});dots.push({i,f:12,lab:STR[i],cat:'root',midi:TUNING[i]+12});lines.push([i,0,i,12,'var(--root)',true]);}}
+    const txt={5:'Her telin 5. perdesi, bir üstteki ince telin açık notasıdır (gitarı kulaktan akort etmenin mantığı). Tek istisna G teli: B telinin sesi G telinin 4. perdesindedir. 5. perde sütununu kalından inceye A D G C E A diye ezberle.',7:'Her telin 7. perdesi B E A D F♯ B dizisini verir. Bir alt teldeki 7. perde, üst telin açık notasının bir oktav yukarısıdır; G teliyle B teli arasında bu 8 perdedir.',12:'12. perde açık tellerin oktavıdır, bu yüzden çift nokta vardır. 12. perdeden sonra her şey aynı sırayla bir oktav yukarıda tekrar eder.'}[p];
+    h+=card('Referans perdeler',`<div class="row"><div class="chips">${[5,7,12].map(x=>`<button data-refp="${x}" aria-pressed="${p===x}">${x}. perde</button>`).join('')}</div></div><div class="neck">${fb({from:0,to:12,dots,lines})}</div><p class="fd" style="margin-top:8px">${txt} Bilinmeyen bir notayı ararken en yakın referans perdeden yukarı ya da aşağı sayarsın.</p>`);
+  }
+  if(st.ms==='uni'){
+    const dots=[],lines=[];
+    const PC=['var(--root)','var(--third)','var(--fifth)','var(--seventh)','var(--ext)','#C2603A'];
+    const pos=[];for(let i=0;i<6;i++)for(let f=0;f<=22;f++)if((TUNING[i]+f)%12===rpc)pos.push({i,f,p:TUNING[i]+f});
+    const pitches=[...new Set(pos.map(x=>x.p))].sort((a,b)=>a-b);
+    const colOf=p=>PC[pitches.indexOf(p)%PC.length];
+    for(const a of pos)for(const b of pos)if(b.i===a.i+1&&b.p===a.p)lines.push([a.i,a.f,b.i,b.f,colOf(a.p),true]);
+    pos.forEach(x=>dots.push({i:x.i,f:x.f,lab:nn(root),col:colOf(x.p),midi:x.p}));
+    const legend=pitches.map((p,k)=>`<span style="--c:${colOf(p)}"><i></i>${nn(root)}${Math.floor(p/12)-1}</span>`).join('');
+    h+=card('Aynı nota başka telde',`<p class="fd">Bir notanın aynısı (aynı yükseklikte) bir ince telde ${uniformTuning()?'5':'birkaç'} perde geride durur.${uniformTuning()?' G telinden B teline geçerken bu fark 4 perdedir; çünkü B teli G telinin 4. perdesine akort edilir.':''} Aşağıda sapın tamamındaki bütün ${nn(root)} sesleri var: <b>aynı renkteki noktalar aynı yükseklikteki sestir</b> ve kesik çizgiyle birbirine bağlıdır.</p><div class="neck">${fb({from:0,to:22,dots,lines})}</div><div class="legend" style="margin-top:6px">${legend}</div><p class="fd" style="margin-top:8px">Renk numarası oktavı gösterir (örneğin ${nn(root)}3, ${nn(root)}4). B teli kuralı her şekil için geçerli: bir şekli G telinden B teline taşırken B teline düşen notayı bir perde ileri al.</p>`);
+  }
+  if(st.ms==='oct'){
+    const dots=[],lines=[];
+    for(let i=0;i<6;i++)for(let f=0;f<=22;f++)if((TUNING[i]+f)%12===rpc)dots.push({i,f,lab:nn(root),cat:'root',midi:TUNING[i]+f});
+    if(st.octm==='pairs'){
+      [[0,2,'var(--third)'],[1,3,'var(--fifth)'],[2,4,'var(--seventh)'],[3,5,'var(--ext)']].forEach(([a,b,col])=>{
+        const d=12-(TUNING[b]-TUNING[a]);if(d<0)return;
+        for(let f=0;f+d<=22;f++)if((TUNING[a]+f)%12===rpc)lines.push([a,f,b,f+d,col,false]);
+      });
+    }else{
+      [[0,2,4,'var(--third)'],[1,3,5,'var(--fifth)']].forEach(([a,b,cc,col])=>{
+        const d1=12-(TUNING[b]-TUNING[a]),d2=12-(TUNING[cc]-TUNING[b]);if(d1<0||d2<0)return;
+        for(let f=0;f+d1+d2<=22;f++)if((TUNING[a]+f)%12===rpc){lines.push([a,f,b,f+d1,col,false]);lines.push([b,f+d1,cc,f+d1+d2,col,false]);}
+      });
+    }
+    h+=card('Oktav şekilleri',`<div class="row"><div class="chips"><button data-octm="pairs" aria-pressed="${st.octm==='pairs'}">İki tel atlayarak</button><button data-octm="three" aria-pressed="${st.octm==='three'}">3 oktav zinciri</button></div></div><div class="neck">${fb({from:0,to:22,dots,lines})}</div>
+    <p class="fd" style="margin-top:8px">${st.octm==='pairs'?`Bir teli atlayarak oktav bulma: 6. telden 4. tele ve 5. telden 3. tele <b>2 perde ileri</b>; 4. telden 2. tele ve 3. telden 1. tele <b>3 perde ileri</b> (B teli yine bir perde kaydırır).`:`İki oktav şekli uç uca eklenince aynı sesin üç oktavı çıkar: 6→4→2 telleri (+2, +3 perde) ve 5→3→1 telleri (+2, +3 perde). Tüm ${nn(root)} sesleri sapta bu iki zincirin içinde.`} Gitarı üç tel çifti gibi düşün: 6–5, 4–3, 2–1. Kalın çiftte çaldığın bir kalıp, orta çiftte 2 perde, ince çiftte 3 perde daha ileride bir oktav yukarıda tekrar eder.</p>`);
+  }
+  if(st.ms==='tri'){
+    const q=st.tq||(TRI[c.T.id]?c.T.id:'maj');const set=st.tset;
+    const {tf,list}=triadShapes(root,q,set);
+    const dots=[],bands=[];
+    list.forEach((v,idx)=>{
+      bands.push({from:v.minF,to:v.maxF,col:INVC[v.inv],lab:['K','1','2'][v.inv],alt:idx%2===1});
+      v.fr.forEach((f,j)=>{const i=set+j;const t=tf.byPc[(TUNING[i]+f)%12];dots.push({i,f,lab:st.mode==='note'?t.nn:t.lab,cat:t.cat,midi:TUNING[i]+f});});
+    });
+    const sets=[[3,'1-2-3'],[2,'2-3-4'],[1,'3-4-5'],[0,'4-5-6']];
+    h+=card('Triadlar ve çevrimler',`<p class="fd">Üç sesli akora triad denir: kök, üçlü ve beşli. Yan yana üç telde, en alttaki sese göre üç şekli vardır: <b>kök durumu</b> (en altta kök), <b>1. çevrim</b> (en altta üçlü) ve <b>2. çevrim</b> (en altta beşli). Bu üç şekil sırayla sap boyunca tekrar eder.</p>
+    <div class="row" style="margin-top:10px"><div class="chips">${Object.keys(TRI).map(x=>`<button data-tq="${x}" aria-pressed="${q===x}">${nn(root)} ${TRIN[x].toLowerCase()}</button>`).join('')}</div></div>
+    <div class="row"><span class="pick-label" style="margin:0">Teller:</span><div class="chips">${sets.map(([x,n])=>`<button data-tset="${x}" aria-pressed="${set===x}">${n}</button>`).join('')}</div>${seg(false)}</div>
+    <div class="mini-tones">${tf.tones.map(t=>`<span style="--c:var(--${t.cat})">${t.nn}<small>${t.lab}</small></span>`).join('')}</div>
+    <div class="neck">${fb({from:0,to:22,dots,bands,top:24})}</div>
+    <div class="legend" style="margin-top:6px">${INVN.map((n,i)=>`<span style="--c:${INVC[i]}"><i></i>${['K','1','2'][i]}: ${n}</span>`).join('')}</div>
+    <p class="fd" style="margin-top:8px">Majörden minöre geçmek için tek ses yeter: üçlüyü yarım ses (bir perde) indir. Eksik triadda beşli de bir perde iner; artık triadda beşli bir perde çıkar ve şekil her 4 perdede aynen tekrar eder.</p>`);
+  }
+  if(st.ms==='shape'){
+    const f=st.fx;
+    const mk=(rootPc,q,fr)=>{const r=rootOf(rootPc);const T=TRI[q];return {cc:{root:r,T:{},...tonesFor(r,T),sym:nn(r)+(q==='m'?'m':'')},v:pinV(fr)};};
+    const mi=mk(4+f,'m',[-1,-1,-1,f,f,f]),ma=mk(7+f,'maj',[-1,-1,f,f,f,-1]);
+    const es=[0,1,3].map(r=>mk(4+r,'maj',[r,r+2,r+2,r+1,r,r]));
+    h+=card('Tek parmakla akor',`<p class="fd">İnce üç tel açıkken (G B E) Em çalar. Bu üç teli aynı perdede tek parmakla basıp kaydırırsan her perdede başka bir minör akor elde edersin. 2., 3. ve 4. teller aynı perdede basılınca da majör akor çıkar. Kalan teller susturulur.</p>
+    <div class="row" style="margin-top:10px;justify-content:center"><button class="nav" data-fx="-1" aria-label="Bir perde geri">−</button><b style="min-width:90px;text-align:center">${f===0?'Açık teller':f+'. perde'}</b><button class="nav" data-fx="1" aria-label="Bir perde ileri">+</button></div>
+    <div class="caged">${[mi,ma].map((x,i)=>`<div class="cg"><h3>${x.cc.sym}</h3><p>${i?'2-3-4. teller':'1-2-3. teller'}</p>${diagram(x.cc,x.v,true)}<div><button class="mini" data-play="${x.v.frets.map((ff,j)=>ff<0?'':TUNING[j]+ff).filter(Boolean).join(',')}">Çal</button></div></div>`).join('')}</div>`)
+    +`<div style="height:12px"></div>`+card('Eşik seni takip eder',`<p class="fd">Açık akorlar aslında şekildir. E şeklini bir perde yukarı taşıyıp eşiğin yerine işaret parmağıyla barre yaparsan F, üç perde taşırsan G olur. Bütün CAGED şekilleri böyle çalışır; CAGED sekmesinde her akor için görebilirsin.</p><div class="caged" style="grid-template-columns:repeat(3,1fr)">${es.map(x=>`<div class="cg"><h3>${x.cc.sym}</h3>${diagram(x.cc,x.v,true)}</div>`).join('')}</div>
+    <p class="fd" style="margin-top:8px">Her akor şeklinin çevresinde bir gam şekli durur ve şekille birlikte kayar. Pentatonik sekmesindeki kutular bunun karşılığıdır. <button class="link" data-gotab="caged">CAGED'e git</button> <button class="link" data-gotab="gam">Gamlar'a git</button></p>`);
+    return h;
+  }
+  if(st.ms==='prog'){
+    const k=st.pk;let r=posOn(k,rpc,0);if(r<3)r+=12;
+    const degs=[['I',0,1,'maj'],['ii',2,2,'m'],['iii',4,3,'m'],['IV',5,4,'maj'],['V',7,5,'maj'],['vi',9,6,'m']];
+    const dots=[];const lst=[];
+    degs.forEach(([rn,sm,d,q],j)=>{
+      const pc=(rpc+sm)%12;let best=null;
+      for(const i of [k,k+1])for(let f=Math.max(0,r-3);f<=Math.min(22,r+4);f++)if((TUNING[i]+f)%12===pc){const sc=Math.abs(f-r)+(i===k&&j?0.5:0);if(!best||sc<best.sc)best={i,f,sc};}
+      const nm=nn(spell(root,d,sm))+(q==='m'?'m':'');lst.push(`${rn}: ${nm}`);
+      if(best)dots.push({i:best.i,f:best.f,pill:true,lab:`${rn} ${nm}`,cat:j===0?'root':q==='m'?'seventh':'third',midi:TUNING[best.i]+best.f});
+    });
+    h+=card('Akor ilerlemesinde kök kalıpları',`<p class="fd">Bir ilerlemedeki akorların kökleri sapta sabit bir kalıp çizer. Kök 6. teldeyken IV aynı perdede 5. telde, V iki perde ileride 5. teldedir. Kök 5. teldeyse aynı kalıp 4. tele kayar. Kalıbı bir kez görünce her tonda aynı yerden çalarsın.</p>
+    <div class="row" style="margin-top:10px"><div class="chips">${[0,1].map(i=>`<button data-pk="${i}" aria-pressed="${k===i}">I kökü ${6-i}. telde</button>`).join('')}</div></div>
+    <div class="neck">${fb({from:Math.max(0,r-3),to:Math.min(22,r+4),dots,fw:58,hiStr:k})}</div>
+    <p class="fd" style="margin-top:8px">${nn(root)} majör tonunda: ${lst.join(', ')}. Mavi tonlu kutular majör, mor tonlular minör akorlar. Kök 6. teldeki akorları E şekliyle, 5. teldekileri A şekliyle çalabilirsin. <button class="link" data-gotab="cof">Beşli çembere git</button></p>`);
+  }
+  if(st.ms==='quiz'){
+    const q=st.qz;const target=CYCLE[q.i%12];const tpc=pcOf(target);
+    const dots=[];let txt='';
+    if(q.m==='h'){const f=((tpc-TUNING[q.str])%12+12)%12;if(q.show){dots.push({i:q.str,f,lab:nn(target),cat:'root',midi:TUNING[q.str]+f});if(f===0)dots.push({i:q.str,f:12,lab:nn(target),cat:'root',midi:TUNING[q.str]+12});}txt=`${6-q.str}. telde (${STR[q.str]}) bul`;}
+    else{if(q.show)for(let i=0;i<6;i++){let f=((tpc-TUNING[i])%12+12)%12;if(f===0)f=12;dots.push({i,f,lab:nn(target),cat:'root',midi:TUNING[i]+f});}txt='6. telden 1. tele her telde bul';}
+    h+=card('Nota bulma alıştırması',`<p class="fd">Notalar dörtlüler sırasıyla gelir (A D G C F B♭ E♭ A♭ D♭ G♭ B E), böylece telde sürekli atlarsın. Notayı bulurken adını yüksek sesle söyle. Otomatik modda metronom çalar: 3. vuruşta cevap görünür, 4 vuruş sonra sıradaki nota gelir. Tempo Ritim sekmesindeki tempoyla aynı (${st.bpm} BPM).</p>
+    <div class="row" style="margin-top:10px"><div class="seg"><button data-qm="h" aria-pressed="${q.m==='h'}">Tek tel</button><button data-qm="v" aria-pressed="${q.m==='v'}">Tüm teller</button></div></div>
+    <div class="quiz"><div class="qnote">${nn(target)}</div><div class="qtxt">${txt}</div></div>
+    <div class="neck">${fb({from:0,to:12,dots,hiStr:q.m==='h'?q.str:undefined})}</div>
+    <div class="actions" style="justify-content:center"><button class="ghost" id="qShow">${q.show?'Gizle':'Göster'}</button><button class="ghost" id="qNext">Sonraki</button><button class="play" id="qAuto">${q.auto?'Durdur':PLAY_ICON+'Otomatik'}</button></div>`);
+  }
+  return h;
+}
+
+let qzTimer=null,qzBeat=0;
+function qzStop(){clearInterval(qzTimer);qzTimer=null;st.qz.auto=false;}
+function qzNext(){const q=st.qz;q.i++;q.show=false;if(q.m==='h'&&q.i%12===0)q.str=(q.str+1)%6;}
+function qzStart(){
+  ac();qzStop();st.qz.auto=true;qzBeat=0;st.qz.show=false;
+  const tick=()=>{
+    if(st.tab!=='map'||st.ms!=='quiz'){qzStop();return;}
+    const b=qzBeat%4;click(ctx.currentTime+.01,b===0?2:0);
+    if(b===2){st.qz.show=true;render();}
+    if(b===3){setTimeout(()=>{if(st.qz.auto){qzNext();render();}},Math.max(50,60000/st.bpm-60));}
+    qzBeat++;
+  };
+  tick();qzTimer=setInterval(tick,60000/st.bpm);
+}
+
+
+/* ---------- Eşlik (backing track) ---------- */
+const JAM=[
+ {n:'12 ölçü blues',pat:8,bpm:90,sc:'blues',bars:[[1,0,'7'],[1,0,'7'],[1,0,'7'],[1,0,'7'],[4,5,'7'],[4,5,'7'],[1,0,'7'],[1,0,'7'],[5,7,'7'],[4,5,'7'],[1,0,'7'],[5,7,'7']],
+  tip:'Klasik blues. Minör pentatonik ya da blues gamıyla solo at; IV7 gelince o akorun büyük üçlüsüne (gamda olmayan ses) dokunmayı dene.'},
+ {n:'Minör blues',pat:9,bpm:70,sc:'minp',bars:[[1,0,'m7'],[1,0,'m7'],[1,0,'m7'],[1,0,'m7'],[4,5,'m7'],[4,5,'m7'],[1,0,'m7'],[1,0,'m7'],[6,8,'maj'],[5,7,'7'],[1,0,'m7'],[5,7,'7']],
+  tip:'Yavaş minör blues. Minör pentatonik oturur; V7 akorunda büyük üçlüye çözülen ifadeler çok etkili.'},
+ {n:'Pop I–V–vi–IV',pat:1,bpm:100,sc:'majp',bars:[[1,0,'maj'],[5,7,'maj'],[6,9,'m'],[4,5,'maj']],
+  tip:'Sayısız pop şarkısının ilerlemesi. Majör pentatonik güvenli; majör gam ile akor tonlarına yönelmeyi dene.'},
+ {n:"50'ler I–vi–IV–V",pat:10,bpm:70,sc:'major',bars:[[1,0,'maj'],[6,9,'m'],[4,5,'maj'],[5,7,'maj']],
+  tip:'Doo-wop ilerlemesi, 6/8 balad ritmiyle. Majör gamla her akorun üçlüsünü hedefle.'},
+ {n:'Rock I–♭VII–IV',pat:0,bpm:110,sc:'mixo',bars:[[1,0,'maj'],[7,10,'maj'],[4,5,'maj'],[1,0,'maj']],
+  tip:'Klasik rock. ♭VII akoru mixolydian gamdan gelir; minör pentatonik de çok iyi oturur.'},
+ {n:'Minör rock i–♭VI–♭VII',pat:0,bpm:105,sc:'minor',bars:[[1,0,'m'],[6,8,'maj'],[7,10,'maj'],[1,0,'m']],
+  tip:'Epik minör rock. Doğal minör gam tam karşılığıdır; minör pentatonikle de çalınır.'},
+ {n:'Andalusian i–♭VII–♭VI–V',pat:5,bpm:80,sc:'minor',bars:[[1,0,'m'],[7,10,'maj'],[6,8,'maj'],[5,7,'maj']],
+  tip:'İspanyol ve flamenko rengi. V akorunda doğal minörün ♭7 sesi yerine büyük üçlüye (gamda yok) yönel.'},
+ {n:'Dorian vamp i7–IV7',pat:3,bpm:96,sc:'dorian',bars:[[1,0,'m7'],[1,0,'m7'],[4,5,'7'],[4,5,'7']],
+  tip:'Santana ve funk havası. Dorian gamın büyük altılısı IV7 akorunun üçlüsüdür; o sesi vurgula.'},
+ {n:'Caz ii–V–I',pat:12,bpm:110,sc:'major',bars:[[2,2,'m7'],[5,7,'7'],[1,0,'maj7'],[1,0,'maj7']],
+  tip:'Cazın temel cümlesi. Majör gamla başla, sonra her akorun 3. ve 7. seslerini hedefle.'},
+ {n:'Funk tek akor (I9)',pat:3,bpm:100,sc:'mixo',bars:[[1,0,'9'],[1,0,'9']],
+  tip:'Tek akor üzerinde groove. Mixolydian ve minör pentatonik arasında gidip gel; ritimle oyna.'}
+];
+function jamChord(P,bar){
+  const [d,sm,type]=P.bars[bar];const root=spell(st.root,d,sm);const T=TYPES.find(t=>t.id===type);
+  return {root,T,...tonesFor(root,T.iv),sym:nn(root)+T.sym,rn:romanOf(d,sm,type)};
+}
+function romanOf(d,sm,type){
+  const R=['','I','II','III','IV','V','VI','VII'][d];const nat=[0,0,2,4,5,7,9,11][d];
+  const acc=sm<nat?'♭':sm>nat?'♯':'';const minor=['m','m7','dim','m7b5'].includes(type);
+  const suf=type==='7'?'7':type==='m7'?'7':type==='maj7'?'maj7':type==='9'?'9':'';
+  return acc+(minor?R.toLowerCase():R)+suf;
+}
+function jamNeck(bar){
+  const P=JAM[st.jam];const sd=scaleData(st.jscale);const ch=jamChord(P,bar);
+  const dots=[];
+  for(let i=0;i<6;i++)for(let f=0;f<=22;f++){
+    const midi=TUNING[i]+f,pc=midi%12;const inS=sd.byPc[pc],inC=ch.byPc[pc];
+    if(!inS&&!inC)continue;
+    if(inS){const t=inS;dots.push({i,f,lab:st.mode==='note'?t.nn:t.lab,cat:t.cat,op:inC?1:.35,ring:!!inC,r:inC?12:10,midi});}
+    else{dots.push({i,f,lab:inC.nn,col:'var(--muted)',ring:true,dash:true,r:11,midi});}
+  }
+  return fb({from:0,to:22,dots,aria:'Gam ve akor tonları'});
+}
+function jamUpdate(bar){
+  st.jbar=bar;
+  document.querySelectorAll('.jbar').forEach((e,i)=>e.classList.toggle('lit',i===bar));
+  const now=document.getElementById('jamNow');
+  if(now){const ch=jamChord(JAM[st.jam],bar);now.innerHTML=`<span class="jrn">${ch.rn}</span> ${ch.sym}`;}
+  const nk=document.getElementById('jamNeck');
+  if(nk){const sl=nk.scrollLeft;nk.innerHTML=jamNeck(bar);nk.scrollLeft=sl;}
+}
+function jamSched(t){
+  const P=JAM[st.jam];const p=PATS[P.pat];const len=Object.values(p.tr)[0].length;const nb=P.bars.length;
+  rt.step%=len;rt.jb%=nb;
+  if(st.jd)for(const [k,pat] of Object.entries(p.tr)){const ch=pat[rt.step];if(ch==='x')SND[k](t,1);else if(ch==='o')SND[k](t,.45);}
+  const half=len/2;
+  if(rt.step===0||rt.step===half){
+    const ch=jamChord(P,rt.jb);const off=t-ctx.currentTime;
+    if(st.jc){const v=voicings(ch)[0];if(v){let k=0;v.frets.forEach((f,i)=>{if(f>=0){pluck(TUNING[i]+f,off+k*.025,rt.step===0?.22:.15);k++;}});}}
+    if(st.jbass){const b=28+((ch.rootPc-4+12)%12);const fifth=b+7;pluck(rt.step===0?b:fifth,off,.55);}
+    if(rt.step===0)rt.queue.push({t,jbar:rt.jb});
+  }
+  rt.next+=60/st.bpm/p.spb;rt.step=(rt.step+1)%len;if(rt.step===0)rt.jb=(rt.jb+1)%nb;
+}
+function jamUI(){
+  const P=JAM[st.jam];const sd=scaleData(st.jscale);const bar=Math.min(st.jbar||0,P.bars.length-1);const ch=jamChord(P,bar);
+  let h=`<div class="chips" style="margin-bottom:12px">${JAM.map((q,i)=>`<button data-jam="${i}" aria-pressed="${st.jam===i}">${q.n}</button>`).join('')}</div>`;
+  h+=`<section class="card" style="margin-top:0"><div class="cardhead"><div><h2 class="sub">${nn(st.root)} tonunda ${P.n}</h2><p class="who">${PATS[P.pat].n} ritmi, önerilen tempo ${P.bpm} BPM</p></div><button class="play" id="jamBtn">${rt.on==='jam'?'Durdur':PLAY_ICON+'Başlat'}</button></div>`;
+  h+=`<div class="jgrid">${P.bars.map((b,i)=>{const c=jamChord(P,i);return `<div class="jbar${i===bar&&rt.on==='jam'?' lit':''}"><small>${i+1}</small><b>${c.sym}</b><span>${c.rn}</span></div>`;}).join('')}</div>`;
+  h+=`<div class="actions" style="margin-top:12px"><button class="ghost" data-jbpm="1">Tempoyu ${P.bpm} yap</button><button class="ghost" data-bpm="-5">−5</button><button class="ghost" data-bpm="5">+5</button><span class="who" style="align-self:center"><b id="bpmVal">${st.bpm}</b> BPM</span></div>`;
+  h+=`<div class="chips" style="margin-top:10px">${[['jd','Davul'],['jbass','Bas'],['jc','Akor']].map(([k,n])=>`<button data-jtog="${k}" aria-pressed="${!!st[k]}">${n}</button>`).join('')}</div>`;
+  h+=`<p class="fd" style="margin-top:10px">${P.tip}</p></section>`;
+  h+=`<h2 class="sub" style="margin-top:18px">Solo haritası</h2>`;
+  h+=`<div class="chips" style="margin:6px 0 10px">${Object.entries(SCALES).map(([k,v])=>`<button data-jscale="${k}" aria-pressed="${st.jscale===k}">${nn(st.root)} ${v.chip.toLowerCase()}</button>`).join('')}</div>`;
+  h+=`<div class="row"><div class="jnow" id="jamNow"><span class="jrn">${ch.rn}</span> ${ch.sym}</div>${seg(false)}</div>`;
+  h+=`<div class="neck" id="jamNeck">${jamNeck(bar)}</div>`;
+  h+=`<p class="hint">Soluk noktalar ${sd.name} sesleri. Beyaz halkalı noktalar o an çalan akorun gamdaki sesleri: cümleni bunlara düşürürsen solo akorla "konuşur". Kesik halkalı gri noktalar akorda olup gamda olmayan seslerdir (örneğin blues'ta IV7'nin üçlüsü); bunlara bilinçli dokunmak bluesun tadıdır. Akor değiştikçe harita kendiliğinden güncellenir.</p>`;
+  h+=`<div class="legend">${[['root','kök'],['third','üçlü'],['fifth','beşli'],['seventh','yedili'],['ext','2, 4, 6']].map(([c,n])=>`<span style="--c:var(--${c})"><i></i>${n}</span>`).join('')}</div>`;
+  return h;
+}
+
+
+/* ---------- Gitar ayarı (setup) ---------- */
+function loadSu(){try{return JSON.parse(localStorage.getItem('setupNow')||'{}')||{};}catch(e){return {};}}
+function saveSu(){try{localStorage.setItem('setupNow',JSON.stringify(st.su));}catch(e){}}
+function loadLog(){try{return JSON.parse(localStorage.getItem('setupLog')||'[]')||[];}catch(e){return [];}}
+function saveLog(l){try{localStorage.setItem('setupLog',JSON.stringify(l));}catch(e){}}
+const RAD={'7.25':{n:'7,25" (vintage)',rel:.30,ab:2.0,at:2.0},'9.5':{n:'9,5"',rel:.25,ab:1.6,at:1.6},'12':{n:'12"',rel:.25,ab:1.6,at:1.6},'16':{n:'14–17" / düz',rel:.20,ab:1.6,at:1.2}};
+const PUT={s:{n:'Tek bobin',b:3.2,t:2.4},h:{n:'Humbucker',b:1.6,t:1.6}};
+const SS=[['order','Sıra'],['relief','Sap bükümü'],['action','Tel yüksekliği'],['nut','Eşik'],['pu','Manyetikler'],['into','Entonasyon'],['trem','Tremolo'],['log','Günlük']];
+const in64=mm=>mm/25.4*64,inch=mm=>mm/25.4;
+function conv(mm){if(!(mm>0))return '';return `= ${inch(mm).toFixed(3)}" ≈ ${in64(mm).toFixed(1)}/64"`;}
+function judge(v,lo,hi){if(!(v>=0)||v==='')return null;return v<lo?'low':v>hi?'high':'ok';}
+function badge(j){return j==='ok'?'<span class="bd ok">Hedefte</span>':j==='high'?'<span class="bd hi">Yüksek</span>':j==='low'?'<span class="bd lo">Düşük</span>':'';}
+const SUEVAL={
+  relief:v=>{const T=RAD[st.rad].rel;const j=judge(v,T-.07,T+.07);
+    return [j,j==='high'?'Sap fazla öne bükülmüş. Gergi çubuğunu (truss rod) ayar ucuna bakarken saat yönünde 1/8 tur sık, akort et, birkaç dakika bekleyip tekrar ölç.':j==='low'?'Sap çok düz ya da geriye bükük; ilk perdelerde tel çarpar. Gergi çubuğunu saat yönünün tersine 1/8 tur gevşet, akort et, tekrar ölç.':j==='ok'?'Sap bükümü iyi. Tel yüksekliğine geçebilirsin.':''];},
+  ab:v=>{const T=RAD[st.rad].ab;const j=judge(v,T-.2,T+.4);return [j,j==='high'?'Kalın E tarafındaki eşik (saddle) vidalarını eşit miktarda gevşeterek indir.':j==='low'?'Tel çarpması olabilir; eşiği biraz kaldır. Önce sap bükümünün doğru olduğundan emin ol.':j==='ok'?'Kalın E yüksekliği iyi.':''];},
+  at:v=>{const T=RAD[st.rad].at;const j=judge(v,T-.25,T+.35);return [j,j==='high'?'İnce E tarafını indir.':j==='low'?'İnce E tarafını biraz kaldır.':j==='ok'?'İnce E yüksekliği iyi.':''];},
+  nb:v=>{const j=judge(v,.45,.65);return [j,j==='high'?'Eşik (nut) yuvası yüksek: ilk perdelerde basmak zorlaşır, akorlar diyez çıkar. Yuvayı eşik eğesiyle azar azar derinleştir ya da luthiere bırak.':j==='low'?'Yuva derin: açık tel çalınca 1. perdeye çarpabilir. Çözümü yuvayı doldurmak ya da eşiği değiştirmek.':j==='ok'?'Kalın E eşik yüksekliği iyi.':''];},
+  nt:v=>{const j=judge(v,.25,.45);return [j,j==='high'?'İnce E yuvası yüksek.':j==='low'?'İnce E yuvası derin, açık telde vızıltı olabilir.':j==='ok'?'İnce E eşik yüksekliği iyi.':''];}
+};
+function puEval(pos,side,v){const T=PUT[st.pu[pos]][side];const j=judge(v,T-.4,T+.8);return [j,j==='high'?'Manyetik uzak: ses zayıf ve ince. Yaklaştır.':j==='low'?(st.pu[pos]==='s'?'Tek bobin çok yakın: mıknatıs teli çeker, kalın tellerde üst perdelerde "kurt sesi" ve akort bozukluğu yapar. Uzaklaştır.':'Çok yakın: ses sıkışır, tel manyetiğe çarpabilir. Uzaklaştır.'):j==='ok'?'İyi bir başlangıç. Kulakla dengele.':''];}
+function intoEval(c){
+  if(c===''||c===undefined||isNaN(c))return ['',''];
+  c=+c;const d=st.scl/2;const mm=Math.abs(d*(Math.pow(2,c/1200)-1));
+  if(Math.abs(c)<=2)return ['ok','Entonasyon iyi (±2 cent içinde).'];
+  return [c>0?'high':'low',c>0?`12. perde diyez: eşiği sapın tersine, yaklaşık ${mm.toFixed(1)} mm geri al.`:`12. perde bemol: eşiği sapa doğru, yaklaşık ${mm.toFixed(1)} mm ileri al.`];
+}
+function evHtml(j,t){return t?`${badge(j)} <span>${t}</span>`:'<span class="who">Ölçtüğün değeri gir.</span>';}
+function inputRow(key,label,ev,unit){
+  const v=st.su[key]??'';const [j,t]=ev(v===''?'':+v);
+  return `<div class="mrow"><label for="su-${key}">${label}</label><div class="mfield"><input id="su-${key}" data-su="${key}" type="number" inputmode="decimal" step="0.01" value="${v}" placeholder="0,00"><span>${unit||'mm'}</span></div><div class="conv" id="cv-${key}">${unit==='cent'?'':conv(+v)}</div><div class="ev" id="ev-${key}">${evHtml(j,t)}</div></div>`;
+}
+function updEval(key){
+  const v=st.su[key];const el=document.getElementById('ev-'+key);const cv=document.getElementById('cv-'+key);
+  let r;
+  if(SUEVAL[key])r=SUEVAL[key](v===''?'':+v);
+  else if(key.startsWith('pu_')){const [,pos,side]=key.split('_');r=puEval(pos,side,v===''?'':+v);}
+  else if(key.startsWith('in_'))r=intoEval(v);
+  if(el&&r)el.innerHTML=evHtml(r[0],r[1]);
+  if(cv&&!key.startsWith('in_'))cv.textContent=conv(+v);
+}
+/* Yandan görünüm şemaları */
+function side(kind){
+  const W=340,H=130,X0=20,X1=320,S=X1-X0;const fx=n=>X0+S*(1-Math.pow(2,-n/12));
+  const bend=kind==='relief'?11:0;const by=x=>74+bend*Math.sin(Math.PI*Math.min(1,Math.max(0,(x-X0)/(fx(22)-X0))));
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px" role="img" aria-label="Ölçüm şeması">`;
+  s+=`<rect x="${fx(22)+4}" y="70" width="${X1-fx(22)+14}" height="30" rx="4" fill="var(--line)"/>`;
+  let p=`M${X0} ${by(X0)}`;for(let x=X0;x<=fx(22)+4;x+=4)p+=` L${x} ${by(x)}`;p+=` L${fx(22)+4} ${by(fx(22))+10} L${X0} ${by(X0)+10} Z`;
+  s+=`<path d="${p}" fill="var(--board)"/>`;
+  for(let n=1;n<=22;n++){const x=fx(n);s+=`<line x1="${x}" x2="${x}" y1="${by(x)-4}" y2="${by(x)}" stroke="var(--fret)" stroke-width="1.6"/>`;}
+  s+=`<rect x="${X0-6}" y="${by(X0)-8}" width="6" height="18" fill="var(--bone)"/>`;
+  const sad=[X1,kind==='relief'?62:48];s+=`<path d="M${X1-6} 70 L${X1} ${sad[1]} L${X1+6} 70 Z" fill="var(--fret)"/>`;
+  const lab=(x,y,t,a)=>`<text x="${x}" y="${y}" font-size="10.5" text-anchor="${a||'middle'}" fill="var(--ink)">${t}</text>`;
+  const gap=(x,y1,y2,t)=>`<line x1="${x}" x2="${x}" y1="${y1}" y2="${y2}" stroke="var(--root)" stroke-width="2"/><path d="M${x-3} ${y1+4} L${x} ${y1} L${x+3} ${y1+4} M${x-3} ${y2-4} L${x} ${y2} L${x+3} ${y2-4}" stroke="var(--root)" stroke-width="1.6" fill="none"/>`+lab(x,y1-6,t);
+  if(kind==='relief'){
+    const a=[fx(1),by(fx(1))-5],b=[fx(17),by(fx(17))-5];
+    s+=`<line x1="${X0}" y1="${by(X0)-8}" x2="${a[0]}" y2="${a[1]}" stroke="var(--ink)" stroke-width="1.5"/><line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="var(--ink)" stroke-width="1.5"/><line x1="${b[0]}" y1="${b[1]}" x2="${X1}" y2="${sad[1]}" stroke="var(--ink)" stroke-width="1.5"/>`;
+    s+=`<rect x="${a[0]-6}" y="${a[1]-12}" width="10" height="9" rx="2" fill="var(--third)"/>`+lab(a[0]+4,a[1]-16,'kapo: 1. perde','start');
+    s+=`<circle cx="${b[0]}" cy="${b[1]-6}" r="5" fill="var(--third)"/>`+lab(b[0],b[1]-15,'basılı: 17. perde');
+    const x8=fx(8);const ys=a[1]+(b[1]-a[1])*(x8-a[0])/(b[0]-a[0]);s+=gap(x8,ys+1,by(x8)-4,'');s+=lab(x8,by(x8)+26,'8. perdede boşluk');
+  }else{
+    const nutY=by(X0)-10;const sy=x=>nutY+(sad[1]-nutY)*(x-X0)/S;
+    if(kind==='pu'){const lf=fx(22);s+=`<line x1="${X0}" y1="${nutY}" x2="${lf}" y2="${by(lf)-5}" stroke="var(--ink)" stroke-width="1.5"/><line x1="${lf}" y1="${by(lf)-5}" x2="${X1}" y2="${sad[1]}" stroke="var(--ink)" stroke-width="1.5"/><circle cx="${lf}" cy="${by(lf)-11}" r="5" fill="var(--third)"/>`+lab(lf-6,by(lf)-20,'son perdeye bas','end');
+      const px=285,py=sy(px);const yy=by(lf)-5+(sad[1]-(by(lf)-5))*(px-lf)/(X1-lf);s+=`<rect x="${px-14}" y="${yy+9}" width="28" height="12" rx="3" fill="var(--seventh)"/>`+gap(px,yy+1,yy+9,'');s+=lab(px,yy+34,'manyetik');}
+    else{s+=`<line x1="${X0}" y1="${nutY}" x2="${X1}" y2="${sad[1]}" stroke="var(--ink)" stroke-width="1.5"/>`;
+      if(kind==='action'){const x=fx(17);s+=gap(x,sy(x)+1,by(x)-4,'17. perde');}
+      if(kind==='nut'){const x=fx(1);s+=gap(x+2,sy(x)+1,by(x)-4,'1. perde');s+=lab(X0+30,by(X0)+26,'eşik (nut)');}
+      if(kind==='into'){s+=`<path d="M${X1-26} 52 L${X1-8} 52 M${X1-12} 48 L${X1-8} 52 L${X1-12} 56" stroke="var(--seventh)" stroke-width="2" fill="none"/>`+lab(X1-30,44,'diyez: geri','end');
+        s+=`<path d="M${X1-8} 108 L${X1-26} 108 M${X1-22} 104 L${X1-26} 108 L${X1-22} 112" stroke="var(--third)" stroke-width="2" fill="none"/>`+lab(X1-30,122,'bemol: ileri','end');
+        const x=fx(12);s+=`<circle cx="${x}" cy="${sy(x)-6}" r="5" fill="var(--third)"/>`+lab(x,sy(x)-15,'12. perde');}
+    }
+  }
+  return s+'</svg>';
+}
+function setupUI(){
+  const R=RAD[st.rad];
+  let h=`<div class="chips" style="margin-bottom:12px">${SS.map(([id,n])=>`<button data-ss="${id}" aria-pressed="${st.ss===id}">${n}</button>`).join('')}</div>`;
+  h+=`<div class="row"><span class="pick-label" style="margin:0">Klavye radyusu:</span><div class="chips">${Object.entries(RAD).map(([k,v])=>`<button data-rad="${k}" aria-pressed="${st.rad===k}">${v.n}</button>`).join('')}</div></div>`;
+  const card=(t,b)=>`<section class="card" style="margin-top:0">${t?`<h2 class="sub" style="margin:0 0 8px">${t}</h2>`:''}${b}</section>`;
+  const steps=a=>`<ol class="steps">${a.map(x=>`<li>${x}</li>`).join('')}</ol>`;
+  if(st.ss==='order'){
+    h+=card('Ayar sırası',`<p class="fd">Her adım bir sonrakini etkiler; bu yüzden sıra önemli. Tel kalınlığı değişirse ayarın tamamı baştan yapılır.</p>${steps([
+      '<b>Yeni teller ve akort.</b> Ayar, çalacağın tel kalınlığı ve akortla yapılır.',
+      '<b>Tremolo dengesi</b> (varsa). Köprünün duruşu tel yüksekliğini ve entonasyonu etkiler.',
+      '<b>Sap bükümü</b> (relief). Gergi çubuğu ile.',
+      '<b>Tel yüksekliği</b> (action). Önce iki E teli, sonra orta teller radyusa göre.',
+      '<b>Eşik (nut) kontrolü.</b> Genelde sadece ölçülür; düzeltme ayrı bir iştir.',
+      '<b>Manyetik yükseklikleri.</b> Mıknatıs çekişi entonasyonu etkilediği için entonasyondan önce.',
+      '<b>Entonasyon.</b> Her zaman en son.',
+      '<b>Son kontrol.</b> Akort, tüm perdelerde çarpma testi, gerekirse küçük düzeltmeler.'])}
+    <p class="fd" style="margin-top:8px">Hedef değerler seçili radyusa göre Fender'ın yayımladığı başlangıç değerleridir. Çalış stiline göre biraz yukarı ya da aşağı ayarlanır; burada değerlendirme toleranslı yapılır. Klavye radyusunu emin değilsen radyus ölçerle kontrol et.</p>`);
+  }
+  if(st.ss==='relief'){
+    h+=card('Sap bükümü (relief)',side('relief')+steps([
+      'Akortlu gitarda kalın E teline 1. perdeye kapo tak (ya da elle bas).',
+      'Aynı teli sapın gövdeyle birleştiği perdede (yaklaşık 17.) bas.',
+      '8. perdede tel ile perde teli arasındaki boşluğu sentil (feeler gauge) ile ölç. İnce E telinde de tekrarla.',
+      'Ayarı küçük adımlarla yap: en fazla 1/8–1/4 tur, sonra akort et ve sapın oturması için bekle.'])
+    +`<p class="fd"><b>Hedef:</b> ${R.rel.toFixed(2)} mm ${conv(R.rel)}. Çubuğu sıkmak (ayar ucuna bakarken saat yönü) bükümü azaltır, gevşetmek artırır. Çubuk zorlanıyorsa durdur; zorlamak çubuğu ya da sapı kırabilir.</p>`
+    +inputRow('relief','8. perdede boşluk',SUEVAL.relief));
+  }
+  if(st.ss==='action'){
+    h+=card('Tel yüksekliği (action)',side('action')+steps([
+      'Sap bükümü ayarlandıktan sonra ölç.',
+      'Tel boşta (basılı değil), 17. perdenin üstü ile telin altı arası; ölçü cetvelini perdenin üstüne dik koy.',
+      'Önce kalın ve ince E telini ayarla, sonra orta telleri radyus eğrisini takip edecek şekilde (radyus ölçeri eşiklerin yanına koyarak) eşitle.',
+      'Tremololu köprüde her eşiğin iki vidasını eşit çevir ki eşik yan yatmasın.'])
+    +`<p class="fd"><b>Hedef:</b> kalın E ${R.ab.toFixed(1)} mm, ince E ${R.at.toFixed(1)} mm. Sert çalıyorsan ya da bend çok yapıyorsan biraz yüksek tut.</p>`
+    +inputRow('ab','Kalın E (17. perde)',SUEVAL.ab)+inputRow('at','İnce E (17. perde)',SUEVAL.at));
+  }
+  if(st.ss==='nut'){
+    h+=card('Eşik (nut) yüksekliği',side('nut')+steps([
+      'Hızlı test: teli 3. perdeye bas, 1. perdede tel ile perde arasında kâğıt kalınlığında çok küçük bir boşluk olmalı.',
+      'Sayısal ölçüm: tel boşta, 1. perde telinin üstü ile tel arası.',
+      'Yuvayı derinleştirmek geri dönüşü zor bir iştir: azar azar ve doğru kalınlıkta eşik eğesiyle yapılır.'])
+    +`<p class="fd"><b>Yaklaşık hedef:</b> kalın E 0,45–0,65 mm, ince E 0,25–0,45 mm.</p>`
+    +inputRow('nb','Kalın E (1. perde)',SUEVAL.nb)+inputRow('nt','İnce E (1. perde)',SUEVAL.nt));
+  }
+  if(st.ss==='pu'){
+    const pos=[['neck','Sap'],['mid','Orta'],['bridge','Köprü']];
+    h+=card('Manyetik yüksekliği',side('pu')+steps([
+      'Tel son perdeye basılıyken ölç: manyetik kutup (pole piece) üstü ile telin altı arası.',
+      'Kalın tel tarafı ve ince tel tarafı ayrı ölçülür; vida ikilileriyle ayarlanır.',
+      'Sap manyetiği daha güçlü titreşim gördüğü için genelde köprüden biraz daha uzak durur.',
+      'Sayılar başlangıç noktasıdır; son karar kulakla verilir: pozisyonlar arası ses seviyesi dengeli olmalı.'])
+    +`<p class="fd"><b>Başlangıç:</b> tek bobin kalın 3,2 / ince 2,4 mm; humbucker kalın 1,6 / ince 1,6 mm.</p>`
+    +pos.map(([k,n])=>`<div class="puhead"><b>${n}</b><div class="seg">${Object.entries(PUT).map(([t,v])=>`<button data-put="${k}|${t}" aria-pressed="${st.pu[k]===t}">${v.n}</button>`).join('')}</div></div>`
+      +inputRow(`pu_${k}_b`,`${n}, kalın tel tarafı`,v=>puEval(k,'b',v))+inputRow(`pu_${k}_t`,`${n}, ince tel tarafı`,v=>puEval(k,'t',v))).join(''));
+  }
+  if(st.ss==='into'){
+    h+=card('Entonasyon',side('into')+steps([
+      'Yeni tellerle, akortlu ve tel yüksekliği ayarlı gitarda çalış.',
+      'Açık teli tunerda tam akort et.',
+      '12. perdede teli basarak çal (flajole değil) ve tunerın gösterdiği sapmayı (cent) not et.',
+      'Diyezse (+) eşiği sapın tersine, bemolse (−) sapa doğru kaydır; her ayardan sonra açık teli yeniden akort edip tekrar ölç.'])
+    +`<div class="row" style="margin-top:6px"><span class="pick-label" style="margin:0">Tel boyu:</span><div class="chips">${[[628,'24,75"'],[635,'25"'],[648,'25,5"']].map(([v,n])=>`<button data-scl="${v}" aria-pressed="${st.scl===v}">${n}</button>`).join('')}</div></div>`
+    +`<p class="fd">12. perdedeki sapmayı cent olarak gir (diyez +, bemol −). Gereken eşik hareketi tel boyundan hesaplanır; yaklaşık bir yönlendirmedir.</p>`
+    +STR.map((n,i)=>inputRow('in_'+i,`${6-i}. tel (${n})`,intoEval,'cent')).join(''));
+  }
+  if(st.ss==='trem'){
+    h+=card('Strat tipi tremolo',steps([
+      'Önce tercihini belirle: <b>yüzen</b> (iki yöne de bükülür) ya da <b>gövdeye yaslı</b> (sadece aşağı).',
+      'Yüzen ayarda köprü plakasının arka ucu gövdeden yaklaşık 3 mm (1/8") kalkık durur; arka boşluktaki yay tutucunun (claw) vidaları dengeyi ayarlar.',
+      'Vidaları sıkmak köprüyü gövdeye çeker, gevşetmek kaldırır. Her ayarda akort değişir; birkaç tur akort edip ölçmen gerekir.',
+      'Yaslı ayarda köprü gövdeye oturana kadar yaylar biraz fazladan gerilir; tel koptuğunda akort bozulmaz.',
+      'Tremolo ayarı değişirse tel yüksekliği ve entonasyonu tekrar kontrol et.']));
+  }
+  if(st.ss==='log'){
+    const log=loadLog();const keys=[['relief','Büküm'],['ab','Action kalın'],['at','Action ince'],['nb','Eşik kalın'],['nt','Eşik ince']];
+    h+=card('Ayar günlüğü',`<p class="fd">Girdiğin ölçümler bu cihazda saklanır. "Kaydet" dediğinde o anki değerler tarihle günlüğe eklenir; mevsim değişince sapın nasıl hareket ettiğini buradan izleyebilirsin.</p>
+    <div class="row" style="margin-top:8px"><label class="pick-label" style="margin:0" for="su-note">Not:</label><input id="su-note" class="tin" placeholder="ör. 10-46 tel, kış ayarı"></div>
+    <div class="actions"><button class="play" id="logSave">Kaydet</button>${log.length?'<button class="ghost" id="logClear">Günlüğü temizle</button>':''}</div>
+    ${log.length?`<div class="tbl" style="margin-top:12px"><table><thead><tr><th>Tarih</th>${keys.map(k=>`<th>${k[1]}</th>`).join('')}<th>Not</th></tr></thead><tbody>${log.slice().reverse().map(e=>`<tr><td>${e.d}</td>${keys.map(k=>`<td>${e.v[k[0]]??'–'}</td>`).join('')}<td>${(e.n||'').replace(/</g,'&lt;')}</td></tr>`).join('')}</tbody></table></div>`:'<p class="hint">Henüz kayıt yok.</p>'}`);
+  }
+  return h;
+}
+
+
+/* ---------- Akort aleti ---------- */
+const tu={on:false,stream:null,an:null,buf:null,hist:[],last:0,err:'',cur:null,raf:0};
+function yin(buf,sr){
+  const W=Math.floor(buf.length/2);const maxT=Math.min(W-1,Math.floor(sr/65)),minT=Math.floor(sr/1100);
+  const d=new Float32Array(maxT+2);
+  for(let t=1;t<=maxT+1;t++){let s=0;for(let i=0;i<W;i++){const x=buf[i]-buf[i+t];s+=x*x;}d[t]=s;}
+  let run=0;d[0]=1;for(let t=1;t<=maxT+1;t++){run+=d[t];d[t]=run?d[t]*t/run:1;}
+  let tau=-1;
+  for(let t=minT;t<=maxT;t++){if(d[t]<0.12){while(t+1<=maxT&&d[t+1]<d[t])t++;tau=t;break;}}
+  if(tau<2)return -1;
+  const x0=d[tau-1],x1=d[tau],x2=d[tau+1];const den=2*(2*x1-x2-x0);
+  const b=den?tau+(x2-x0)/den:tau;
+  return sr/b;
+}
+function noteInfo(f){
+  const m=69+12*Math.log2(f/st.a4);const n=Math.round(m);
+  return {f,midi:n,cents:(m-n)*100,name:SIMPLE[((n%12)+12)%12],oct:Math.floor(n/12)-1};
+}
+async function tuStart(){
+  tu.err='';
+  try{
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw {name:'NoMedia'};
+    const c=ac();
+    tu.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+    const srcN=c.createMediaStreamSource(tu.stream);
+    tu.an=c.createAnalyser();tu.an.fftSize=4096;srcN.connect(tu.an);
+    tu.buf=new Float32Array(tu.an.fftSize);tu.on=true;tu.hist=[];tu.cur=null;
+    render();tuLoop();
+  }catch(e){
+    tu.on=false;
+    tu.err=e&&e.name==='NotAllowedError'?'Mikrofon izni verilmedi. Tarayıcı ya da uygulama ayarlarından bu sayfaya mikrofon izni verip tekrar dene.':
+      'Bu ortamda mikrofona erişilemedi. Uygulamanın içinde gömülü açılan sayfalar mikrofonu engelleyebilir. Aşağıdaki referans seslerle kulaktan akort edebilirsin; Android sürümünde tuner doğrudan çalışacak.';
+    render();
+  }
+}
+function tuStop(){
+  tu.on=false;cancelAnimationFrame(tu.raf);
+  if(tu.stream)tu.stream.getTracks().forEach(t=>t.stop());tu.stream=null;tu.an=null;
+}
+function tuLoop(){
+  if(!tu.on)return;
+  tu.raf=requestAnimationFrame(tuLoop);
+  const now=performance.now();if(now-tu.last<50)return;tu.last=now;
+  tu.an.getFloatTimeDomainData(tu.buf);
+  let rms=0;for(let i=0;i<tu.buf.length;i++)rms+=tu.buf[i]*tu.buf[i];rms=Math.sqrt(rms/tu.buf.length);
+  if(rms<0.008){tuShow(null,rms);return;}
+  const f=yin(tu.buf,ctx.sampleRate);
+  if(f<60||f>1400){tuShow(null,rms);return;}
+  tu.hist.push(f);if(tu.hist.length>5)tu.hist.shift();
+  const med=[...tu.hist].sort((a,b)=>a-b)[Math.floor(tu.hist.length/2)];
+  tuShow(noteInfo(med),rms);
+}
+function tuShow(n,rms){
+  const lvl=document.getElementById('tuLvl');if(lvl)lvl.style.width=Math.min(100,rms*600)+'%';
+  if(!n){const nm=document.getElementById('tuName');if(nm&&!tu.cur)nm.textContent='–';return;}
+  tu.cur=n;
+  const c=Math.max(-50,Math.min(50,n.cents));const ok=Math.abs(n.cents)<=3;
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  set('tuName',n.name);set('tuOct',n.oct);set('tuHz',n.f.toFixed(1)+' Hz');
+  set('tuCents',(n.cents>0?'+':'')+n.cents.toFixed(0)+' cent');
+  const nd=document.getElementById('tuNeedle');if(nd){nd.setAttribute('transform',`rotate(${c*1.2} 160 150)`);nd.setAttribute('stroke',ok?'var(--third)':Math.abs(n.cents)<15?'var(--root)':'var(--seventh)');}
+  const box=document.getElementById('tuBox');if(box)box.classList.toggle('intune',ok);
+  set('tuHint',ok?'Akortta':n.cents<0?'Pes: teli sık (sesi yükselt)':'Tiz: teli gevşet (sesi indir)');
+  let si=-1,best=99;BASE.forEach((m,i)=>{const dd=Math.abs(n.midi+n.cents/100-m);if(dd<best){best=dd;si=i;}});
+  document.querySelectorAll('[data-tstr]').forEach(el=>el.classList.toggle('on',+el.dataset.tstr===si&&best<1.5));
+  if(st.tmode==='into'){
+    const i12=BASE.findIndex(m=>m+12===n.midi);
+    const el=document.getElementById('tuInto');
+    if(el)el.innerHTML=i12>=0?`12. perde, <b>${6-i12}. tel (${STR[i12]})</b>: ${(n.cents>0?'+':'')+n.cents.toFixed(0)} cent <button class="play" data-tsave="${i12}">Entonasyona kaydet</button>`:'Açık telin oktavı (12. perde) algılanmadı. Teli 12. perdede basılı çal.';
+  }
+}
+function gauge(){
+  let s=`<svg viewBox="0 0 320 170" width="100%" style="max-width:340px" role="img" aria-label="Cent göstergesi">`;
+  const arc=(a0,a1,r)=>{const p=a=>[160+r*Math.sin(a*Math.PI/180),150-r*Math.cos(a*Math.PI/180)];const [x0,y0]=p(a0),[x1,y1]=p(a1);return `M${x0} ${y0} A${r} ${r} 0 0 1 ${x1} ${y1}`;};
+  s+=`<path d="${arc(-60,60,130)}" stroke="var(--line)" stroke-width="14" fill="none" stroke-linecap="round"/>`;
+  s+=`<path d="${arc(-6,6,130)}" stroke="var(--third)" stroke-width="14" fill="none"/>`;
+  for(let c=-50;c<=50;c+=10){const a=c*1.2*Math.PI/180;const r1=c%50===0||c===0?108:114;s+=`<line x1="${160+r1*Math.sin(a)}" y1="${150-r1*Math.cos(a)}" x2="${160+122*Math.sin(a)}" y2="${150-122*Math.cos(a)}" stroke="var(--muted)" stroke-width="${c===0?3:1.5}"/>`;}
+  s+=`<text x="40" y="168" font-size="12" fill="var(--muted)">−50</text><text x="268" y="168" font-size="12" fill="var(--muted)">+50</text>`;
+  s+=`<line id="tuNeedle" x1="160" y1="150" x2="160" y2="34" stroke="var(--muted)" stroke-width="4" stroke-linecap="round" transform="rotate(0 160 150)" style="transition:transform .08s"/><circle cx="160" cy="150" r="8" fill="var(--ink)"/>`;
+  return s+'</svg>';
+}
+function tunerUI(){
+  let h=`<div class="row"><div class="seg"><button data-tmode="tune" aria-pressed="${st.tmode==='tune'}">Tel akordu</button><button data-tmode="into" aria-pressed="${st.tmode==='into'}">Entonasyon ölçümü</button></div>
+  <div class="a4">A4 = <button class="nav sm" data-a4="-1" aria-label="A4 frekansını düşür">−</button><b id="tuA4">${st.a4}</b> Hz<button class="nav sm" data-a4="1" aria-label="A4 frekansını artır">+</button></div></div>`;
+  h+=`<section class="card tuner" id="tuBox" style="margin-top:0">${gauge()}
+  <div class="tunote"><span id="tuName">–</span><sub id="tuOct"></sub></div>
+  <div class="tmeta"><span id="tuCents">0 cent</span><span id="tuHz">– Hz</span></div>
+  <div class="thint" id="tuHint">${tu.on?'Bir tel çal':'Başlatmak için mikrofonu aç'}</div>
+  <div class="tlvl"><i id="tuLvl"></i></div>
+  <div class="tstrs">${STR.map((n,i)=>`<button data-tstr="${i}" data-tref="${i}" aria-label="${6-i}. tel referans sesi"><b>${n==='e'?'E':n}</b><small>${6-i}. tel</small></button>`).join('')}</div>
+  ${st.tmode==='into'?`<div class="tinto" id="tuInto">${tu.on?'Teli açık halde akort et, sonra 12. perdede basılı çal.':'Mikrofonu aç, önce açık teli akort et, sonra 12. perdeye basıp çal.'}</div>`:''}
+  <div class="actions" style="justify-content:center;margin-top:12px"><button class="play" id="tuBtn">${tu.on?'Mikrofonu kapat':PLAY_ICON+'Mikrofonu aç'}</button></div>
+  ${tu.err?`<p class="terr">${tu.err}</p>`:''}</section>`;
+  h+=`<p class="hint">Standart akort: E A D G B E. Telin altındaki kutuya dokununca o telin referans sesi çalar; mikrofon açıkken çaldığın tel otomatik vurgulanır. Gösterge ±3 cent içindeyse yeşile döner. En iyi sonuç için sessiz bir ortamda telefonu gitarın gövdesine yakın tut, teli orta kuvvetle vur ve sesi birkaç saniye çınlamaya bırak. Elektro gitarı amfisiz çalarken de çalışır.</p>`;
+  h+=`<p class="hint">Entonasyon ölçümü modunda 12. perdede basılı çaldığın sesin sapması doğrudan Gitar ayarı sekmesindeki entonasyon bölümüne kaydedilir. <button class="link" data-gotab="setup">Gitar ayarına git</button></p>`;
+  return h;
+}
+
+
+/* ---------- Akor bulucu ---------- */
+function identify(fr){
+  const ps=[];fr.forEach((f,i)=>{if(f>=0)ps.push(TUNING[i]+f);});
+  if(!ps.length)return {ps,res:[]};
+  const pcs=[...new Set(ps.map(p=>p%12))];const bass=Math.min(...ps)%12;const res=[];
+  for(let r=0;r<12;r++){
+    if(!pcs.includes(r))continue;
+    TYPES.forEach((T,ti)=>{
+      const tp=T.iv.map(k=>(r+I[k].s)%12);const ts=new Set(tp);
+      if(!pcs.every(p=>ts.has(p)))return;
+      const miss=T.iv.filter(k=>!pcs.includes((r+I[k].s)%12));
+      let sc=100-ti*.6;
+      if(miss.length){if(!(miss.length===1&&miss[0]==='P5'))return;sc-=25;}
+      if(r===bass)sc+=20;
+      res.push({r,T,sc,omit5:miss.length>0});
+    });
+  }
+  res.sort((a,b)=>b.sc-a.sc);
+  return {ps,pcs,bass,res};
+}
+function idSym(x,bass){
+  const root=ROOTS[x.r];const tf=tonesFor(root,x.T.iv);
+  return {tf,sym:nn(root)+x.T.sym+(bass!==x.r&&tf.byPc[bass]?'/'+tf.byPc[bass].nn:''),root};
+}
+function finderSVG(best){
+  const fd=st.fd,fs=st.fs,cw=44,ch=46,L=40,T=58,nF=5;
+  const W=L+cw*5+34,H=T+ch*nF+34;
+  const tf=best?best.tf:null;
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Akor bulma klavyesi">`;
+  s+=boardV(L,T,cw,ch,nF,fs,false);
+  for(let i=0;i<6;i++)for(let k=0;k<nF;k++){const f=fs+k;s+=`<rect data-fc="${i}|${f}" x="${L+cw*(i-.5)}" y="${T+ch*k}" width="${cw}" height="${ch}" fill="transparent" style="cursor:pointer"/>`;}
+  for(let i=0;i<6;i++){
+    const f=fd[i],x=L+cw*i,ty=T-26;
+    const midi=TUNING[i]+f;const t=f>=0&&tf?tf.byPc[midi%12]:null;
+    const lab=f>=0?(st.mode==='note'||!t?SIMPLE[midi%12]:t.lab):'';
+    const col=t?`var(--${t.cat})`:'var(--ink)';
+    let top='';
+    if(f<0)top=`<text x="${x}" y="${ty+6}" text-anchor="middle" font-size="18" fill="var(--muted)">×</text>`;
+    else if(f===0)top=`<circle cx="${x}" cy="${ty}" r="11" fill="var(--bg)" stroke="${col}" stroke-width="3"/>`;
+    else if(f<fs||f>=fs+nF)top=`<text x="${x}" y="${ty+5}" text-anchor="middle" font-size="13" font-weight="700" fill="var(--ink)">${f}</text>`;
+    else top=`<circle cx="${x}" cy="${ty}" r="11" fill="none" stroke="var(--line)" stroke-dasharray="2 3"/>`;
+    s+=`<g data-ftop="${i}" style="cursor:pointer"><rect x="${x-cw/2}" y="${ty-18}" width="${cw}" height="34" fill="transparent"/>${top}</g>`;
+    if(f>=fs&&f<fs+nF){const y=T+ch*(f-fs+.5);s+=`<g data-fc="${i}|${f}" style="cursor:pointer"><circle cx="${x}" cy="${y}" r="15" fill="${t?col:'var(--muted)'}" ${t&&t.cat==='root'?'stroke="var(--bone)" stroke-width="2"':''}/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="${lab.length>2?11:13}" font-weight="700" fill="${t&&t.cat==='root'?'#2A1C05':'#fff'}" pointer-events="none">${lab}</text></g>`;}
+    if(f>=0)s+=`<text x="${x}" y="${H-8}" text-anchor="middle" font-size="14" font-weight="700" fill="${col}">${t?t.nn:SIMPLE[midi%12]}</text>`;
+  }
+  return s+'</svg>';
+}
+function finderUI(){
+  const id=identify(st.fd);let best=null;
+  if(id.res.length)best={...id.res[0],...idSym(id.res[0],id.bass)};
+  let h=`<p class="hint" style="margin:0 0 10px">Bastığın notalara dokun: her telde bir nota. Tel başındaki işarete dokununca tel açık (o) ya da susturulmuş (×) olur. ‹ › ile sapta yukarı aşağı kay.</p>`;
+  h+=`<div class="row">${seg(false)}<div class="a4"><button class="nav sm" data-fs="-1" aria-label="Pozisyonu düşür" ${st.fs<=1?'disabled':''}>‹</button><span>${st.fs}. perde</span><button class="nav sm" data-fs="1" aria-label="Pozisyonu yükselt" ${st.fs>=18?'disabled':''}>›</button></div></div>`;
+  h+=`<div class="finder"><div class="fboard">${finderSVG(best)}</div><div class="fres">`;
+  if(!id.ps.length)h+=`<div class="empty">Henüz nota seçmedin.</div>`;
+  else if(!best){
+    const bassN=SIMPLE[id.bass];
+    h+=`<div class="frbig">?</div><p class="fd">Bu notalar (${id.pcs.map(p=>SIMPLE[p]).join(', ')}) listedeki akor tiplerinden birine uymadı.${id.pcs.length===2?` İki farklı ses bir aralıktır: ${bassN} ile ${SIMPLE[id.pcs.find(p=>p!==id.bass)]} arası ${IVT[((id.pcs.find(p=>p!==id.bass)-id.bass)%12+12)%12].nm}.`:''}${id.pcs.length===1?' Tek bir ses seçtin.':''}</p>`;
+  }else{
+    const inv=best.r===id.bass?'kök durumunda':`bas sesi ${best.tf.byPc[id.bass].nn} (${best.tf.byPc[id.bass].lab}), yani çevrim ya da slash akor`;
+    h+=`<div class="frbig">${best.sym}</div><p class="trname" style="margin:0">${solf(best.root)} ${best.T.tr}</p><p class="fd" style="margin:6px 0 0">${inv}${best.omit5?'; beşlisi çalınmamış (gitarda çok yaygın)':''}.</p>`;
+    h+=`<div class="mini-tones" style="margin-top:8px">${best.tf.tones.map(t=>`<span style="--c:var(--${t.cat});${id.pcs.includes(t.pc)?'':'opacity:.4'}">${t.nn}<small>${t.lab}</small></span>`).join('')}</div>`;
+    const alts=id.res.slice(1,6).map(x=>idSym(x,id.bass).sym).filter((v,i,a)=>a.indexOf(v)===i&&v!==best.sym);
+    if(alts.length)h+=`<p class="fd" style="margin-top:4px"><b>Başka adlandırmalar:</b> ${alts.join(', ')}</p>`;
+  }
+  h+=`<div class="actions" style="margin-top:12px">${id.ps.length?`<button class="play" id="fPlay">${PLAY_ICON}Çal</button>`:''}${best?`<button class="ghost" id="fSel">Bu akoru incele</button>`:''}<button class="ghost" id="fClear">Temizle</button></div></div></div>`;
+  h+=`<p class="hint">Aynı notalar birden fazla ada sahip olabilir; örneğin C6 ile Am7 aynı seslerdir. Program en alttaki sesi kök kabul eden adı öne çıkarır, diğerlerini "başka adlandırmalar" olarak gösterir. Beşlisi eksik akorlar da tanınır.</p>`;
+  return h;
+}
+
+
+/* ---------- Akor haritası: kök 6., 5., 4. telde kaydırılabilir şekiller ---------- */
+const MOV={
+ maj:[[0,2,2,1,0,0],[N,0,2,2,2,0],[N,N,0,2,3,2]],
+ m:[[0,2,2,0,0,0],[N,0,2,2,1,0],[N,N,0,2,3,1]],
+ '7':[[0,2,0,1,0,0],[N,0,2,0,2,0],[N,N,0,2,1,2]],
+ maj7:[[0,N,1,1,0,N],[N,0,2,1,2,0],[N,N,0,2,2,2]],
+ m7:[[0,2,0,0,0,0],[N,0,2,0,1,0],[N,N,0,2,1,1]],
+ sus2:[null,[N,0,2,2,0,0],[N,N,0,2,3,0]],
+ sus4:[[0,2,2,2,0,0],[N,0,2,2,3,0],[N,N,0,2,3,3]],
+ '7sus4':[[0,2,0,2,0,0],[N,0,2,0,3,0],[N,N,0,2,1,3]],
+ '6':[[0,N,-1,1,0,N],[N,0,2,2,2,2],[N,N,0,2,0,2]],
+ m6:[[0,N,-1,0,0,N],[N,0,2,2,1,2],[N,N,0,2,0,1]],
+ add9:[[0,N,2,1,0,2],[N,0,2,4,2,0],null],
+ '9':[[0,N,0,1,0,2],[N,0,-1,0,0,0],null],
+ dim:[[0,1,2,0,N,N],[N,0,1,2,1,N],[N,N,0,1,3,1]],
+ m7b5:[[0,N,0,0,-1,N],[N,0,1,0,1,N],[N,N,0,1,1,1]],
+ dim7:[[0,N,-1,0,-1,N],[N,0,1,-1,1,N],[N,N,0,1,0,1]],
+ aug:[[0,3,2,1,1,N],[N,0,3,2,2,1],[N,N,0,3,3,2]],
+ '5':[[0,2,2,N,N,N],[N,0,2,2,N,N],[N,N,0,2,3,N]],
+ '7s9':[null,[N,0,-1,0,1,N],null],
+ mmaj9:[[0,2,1,0,0,2],null,null],
+ add2:[[0,N,-3,-1,-3,0],null,null],
+ m11:[[0,0,0,0,0,N],[N,0,0,0,1,0],null]
+};
+const FINGER=['','işaret parmağı','orta parmak','yüzük parmağı','serçe parmak'];
+function movShape(c,k){
+  const set=MOV[c.T.id];if(!set||!set[k])return null;const o=set[k];
+  const offs=o.filter(x=>x!==null);const minO=Math.min(...offs);
+  const r=posOn(k,c.rootPc,-minO);if(r+Math.max(...offs)>22)return null;
+  const fr=o.map(x=>x===null?-1:r+x);if(!fr.every((f,i)=>f<0||c.byPc[(TUNING[i]+f)%12]))return null;const v=pinV(fr);v.r=r;v.k=k;return v;
+}
+function rootGuide(k,rpc){
+  const out=[];for(let f=0;f<=12;f++){const pc=(TUNING[k]+f)%12;const nat=LETTER_PC.indexOf(pc);if(nat>=0||pc===rpc)out.push({f,pc,nm:nat>=0?LETTERS[nat]:SIMPLE[pc]});}
+  return out;
+}
+function shapesUI(c){
+  let h=`<p class="fd" style="margin:0 0 10px">Her akor tipinin üç temel kaydırılabilir şekli var: kök 6. telde, 5. telde ve 4. telde. Şekli bir kez öğren; kökü istediğin perdeye koyunca aynı şekil o akoru verir. Kök noktası altın renkli halkayla gösterilir.</p>`;
+  h+=`<p class="hint" style="margin:0 0 8px">Tabloda "kök 1" kökün işaret parmağıyla, "kök 2" orta parmakla basıldığını gösterir.</p><div class="row"><div class="seg"><button data-shm="one" aria-pressed="${st.shm==='one'}">${c.sym} şekilleri</button><button data-shm="all" aria-pressed="${st.shm==='all'}">Tüm tipler (${nn(c.root)})</button></div>${seg(true)}</div>`;
+  if(st.shm==='one'){
+    h+=`<div class="shgrid">${[0,1,2].map(k=>{
+      const v=movShape(c,k);
+      if(!v)return `<div class="cg shcard"><h3>Kök ${6-k}. telde</h3><p class="fd" style="padding:20px 6px">${c.sym} için bu telde yaygın bir kapalı şekil yok.</p></div>`;
+      const fg=v.fing[k];
+      return `<div class="cg shcard"><h3>Kök ${6-k}. telde</h3>${diagram(c,v,false)}
+        <div class="herotab">${v.frets.map(f=>f<0?'x':f).join(' ')}</div>
+        <p class="fd" style="margin:6px 4px 4px">Kök <b>${nn(c.root)}</b>: ${6-k}. tel, ${v.r===0?'açık tel (şeklin açık akor hali; bir perde yukarı kaydırınca barre gerekir)':v.r+'. perde'}${fg?`, <b>${FINGER[fg]} (${fg})</b>`:''}.${v.barre?` ${v.barre.fret}. perdede barre.`:''}</p>
+        <button class="mini" data-play="${v.frets.map((f,i)=>f<0?'':TUNING[i]+f).filter(Boolean).join(',')}">Çal</button></div>`;}).join('')}</div>`;
+    h+=`<h2 class="sub" style="margin-top:18px">Kökü bulmak için</h2><p class="fd" style="margin:0 0 8px">Şekli kaydırırken kök telindeki notaları bilmen yeter. Teller tabdaki gibi sıralı: ince tel üstte, kalın tel altta. Doğal notalar ve seçili kök (${nn(c.root)}):</p>`;
+    h+=[2,1,0].map(k=>`<div class="rguide"><b>${6-k}. tel (${STR[k]})</b><div>${rootGuide(k,c.rootPc).map(x=>`<span class="${x.pc===c.rootPc?'on':''}"><small>${x.f}</small>${x.nm}</span>`).join('')}</div></div>`).join('');
+    h+=`<p class="hint">12. perdeden sonra aynı notalar tekrar eder. 6. ve 1. tel aynı; 6. teldeki kök perdesini bilen 1. teldekini de bilir.</p>`;
+  }else{
+    const rows=TYPES.filter(T=>MOV[T.id]);
+    h+=`<div class="shtable">${rows.map(T=>{
+      const cc={root:c.root,T,...tonesFor(c.root,T.iv),sym:nn(c.root)+T.sym};
+      return `<div class="shrow"><div class="shname"><b>${cc.sym}</b><small>${T.tr}</small></div>${[0,1,2].map(k=>{const v=movShape(cc,k);
+        return v?`<div class="shcell" data-play="${v.frets.map((f,i)=>f<0?'':TUNING[i]+f).filter(Boolean).join(',')}" role="button" tabindex="0">${diagram(cc,v,true)}<small>${6-k}. tel${v.fing[k]?`, kök ${v.fing[k]}`:''}</small></div>`:`<div class="shcell empty-c"><small>${6-k}. tel: yok</small></div>`;}).join('')}</div>`;}).join('')}</div>`;
+    h+=`<p class="hint">Bir diyagrama dokununca çalar. Satırları yukarıdan aşağı karşılaştır: aynı kök telindeki şekiller arasında genelde tek bir parmak yer değiştirir (örneğin majörden minöre üçlü bir perde iner, majörden 7'ye kök oktavı ♭7'ye iner).</p>`;
+  }
+  return h;
+}
+
+/* ---------- Akort türü ve kapo ---------- */
+const OPEN_EASY=new Set(['C','A','G','E','D','Am','Em','Dm','A7','E7','D7','G7','C7','B7','Am7','Em7','Dm7','Cmaj7','Fmaj7','Amaj7','Dmaj7','Asus2','Asus4','Dsus2','Dsus4','Esus4','Cadd9']);
+function parseChord(tok){
+  const m=tok.trim().match(/^([A-Ga-g])([#♯b♭]?)(.*)$/);if(!m)return null;
+  const l=LETTERS.indexOf(m[1].toUpperCase());const a=m[2]==='#'||m[2]==='♯'?1:m[2]?-1:0;
+  return {pc:pcOf({l,a}),suf:m[3]};
+}
+function shapeName(pc,suf,capo){return nn(ROOTS[((pc-capo)%12+12)%12])+suf;}
+function tunUI(c){
+  let h=`<h2 class="sub" style="margin-top:0">Akort düzeni</h2>${isAltTuning()?'':'<p class="fd" style="margin:0 0 6px">Şu an standart düzen (E A D G B E), kapo yok.</p>'}<div class="tlist">${TUNINGS.map(t=>`<button class="tcard" data-tun="${t.id}" aria-pressed="${st.tun===t.id}"><b>${t.n}</b><span>${t.m.map((m,i)=>{const n=SIMPLE[m%12];return i===5?n.toLowerCase():n;}).join(' ')}</span>${t.d?`<small>${t.d}</small>`:''}</button>`).join('')}</div>`;
+  h+=`<p class="hint">Akort değişince bütün basışlar, gamlar, haritalar, akor bulucu ve tuner seçili akort düzenine göre hesaplanır.${uniformTuning()?'':' Bu akortta teller arası aralıklar standarttan farklı: CAGED ve ezber şekiller geçerli olmaz, Basışlar sekmesindeki hesaplanan şekiller kullanılır.'}</p>`;
+  h+=`<h2 class="sub" style="margin-top:18px">Kapo</h2><div class="row" style="justify-content:flex-start"><button class="nav" data-capo="-1" aria-label="Kapoyu indir" ${st.capo<=0?'disabled':''}>−</button><b class="capo">${st.capo?st.capo+'. perde':'Kapo yok'}</b><button class="nav" data-capo="1" aria-label="Kapoyu yükselt" ${st.capo>=9?'disabled':''}>+</button></div>`;
+  h+=`<p class="fd">Kapo takılıyken akor adları <b>duyulan</b> sesi gösterir; diyagramlardaki perde numaraları ise kapoya göredir (kapo = 0. perde). Üstteki akor kartı hangi şekli çalacağını ayrıca yazar. Örneğin kapo 2 ile G şekli A olarak duyulur.</p>`;
+  const ro=remLoad();const rcur=ro.off===remKey()?'off':(ro.every||'3m');
+  h+=`<h2 class="sub" style="margin-top:18px">Hatırlatma</h2><p class="fd" style="margin:0 0 8px">Standart dışı bir düzen ya da kapo seçiliyken üstte uyarı şeridi durur; uygulama açılınca ve aşağıdaki aralıkta da hatırlatır.</p><div class="chips">${[['3m','3 dakikada bir'],['1h','Saatte bir'],['off','Bu düzen için kapalı']].map(([k,n])=>`<button data-remset="${k}" aria-pressed="${rcur===k}">${n}</button>`).join('')}</div>`;
+  h+=`<h2 class="sub" style="margin-top:18px">Kapo hesaplayıcı</h2><p class="fd" style="margin:0 0 8px">Şarkının akorlarını boşlukla yaz; her kapo konumunda hangi şekilleri çalacağını gösteririm. Açık akorla çalınabilenler yeşil, en çok açık akor veren konum "önerilen".</p>`;
+  h+=`<input class="tin" id="capoIn" value="${(st.capoSong||'A E F#m D').replace(/"/g,'&quot;')}" style="width:100%" aria-label="Şarkının akorları">`;
+  h+=`<div id="capoOut">${capoTable()}</div>`;
+  return h;
+}
+function capoTable(){
+  const toks=(st.capoSong||'A E F#m D').split(/[\s,]+/).filter(Boolean);const ch=toks.map(parseChord);
+  if(!ch.length||ch.some(x=>!x))return '<p class="hint">Akorları A, F#m, Bb7 gibi yaz.</p>';
+  const rows=[];for(let k=0;k<=7;k++){const sh=ch.map(x=>shapeName(x.pc,x.suf,k));const easy=sh.filter(x=>OPEN_EASY.has(x)).length;rows.push({k,sh,easy});}
+  const best=Math.max(...rows.map(r=>r.easy));
+  return `<div class="tbl" style="margin-top:10px"><table><thead><tr><th>Kapo</th>${toks.map(t=>`<th>${t}</th>`).join('')}<th></th></tr></thead><tbody>${rows.map(r=>`<tr${r.easy===best?' aria-current="true"':''}><td><b>${r.k||'Yok'}</b></td>${r.sh.map(x=>`<td class="${OPEN_EASY.has(x)?'easy':''}">${x}</td>`).join('')}<td>${r.easy===best?'<span class="bd ok">önerilen</span>':''}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
+/* ---------- Arpejler ---------- */
+function arpPositions(c){
+  const minorish=c.tones.some(t=>t.key==='b3');
+  const psd=scaleData(minorish?'minp':'majp',c.root);const pb=boxes(psd);
+  return pb.map(box=>{
+    const notes=[];
+    for(let i=0;i<6;i++)for(let f=Math.max(0,box.minF-1);f<=Math.min(22,box.maxF+1);f++){
+      const p=TUNING[i]+f;if(!c.byPc[p%12])continue;
+      const core=f>=box.minF&&f<=box.maxF;
+      const ix=notes.findIndex(n=>n.p===p);
+      if(ix>=0){if(!notes[ix].core&&core)notes.splice(ix,1);else continue;}
+      notes.push({i,f,p,core});
+    }
+    const fs=notes.map(n=>n.f);return {num:box.num,notes,minF:Math.min(...fs),maxF:Math.max(...fs)};
+  }).sort((a,b)=>a.minF-b.minF);
+}
+function arpUI(c){
+  const ps=arpPositions(c);window._arps=ps;
+  const sel=st.abox||'all';
+  let h=`<p class="fd" style="margin:0 0 10px">Arpej, akorun seslerini aynı anda değil tek tek çalmaktır. Burada ${c.sym} akorunun sesleri (${c.tones.map(t=>t.nn).join(', ')}) gam pozisyonlarıyla aynı beş bölgeye ayrılmış durumda. Solo çalarken akor değiştiğinde o akorun arpej seslerine inmek cümleyi akorla birlikte değiştirir.</p>`;
+  h+=`<div class="mini-tones">${c.tones.map(t=>`<span style="--c:var(--${t.cat})">${t.nn}<small>${t.lab}</small></span>`).join('')}</div>`;
+  h+=`<div class="row">${seg(false)}<div class="chips"><button data-abox="all" aria-pressed="${sel==='all'}">Tümü</button>${[1,2,3,4,5].map(n=>`<button data-abox="${n}" aria-pressed="${sel===String(n)}">${n}</button>`).join('')}</div></div>`;
+  const o={nF:22,boxes:boxInstances(ps)};if(sel!=='all')o.sel=+sel;
+  h+=`<div class="neck">${neck(c.byPc,o)}</div>`;
+  if(sel!=='all'){const b=ps.find(x=>x.num===+sel);if(b)h+=`<div class="boxview">${boxDiagram(c,b)}<div class="info"><p><b>Pozisyon ${b.num}</b></p><p>${b.minF===0?'Açık tellerden':b.minF+'. perdeden'} ${b.maxF}. perdeye kadar.</p><p class="hint">Kökten başlayıp yukarı çık, en üst sesten geri in. Her sesi ayrı vur; sonra aynı pozisyonda pentatonikle karıştır.</p><div class="actions"><button class="ghost" id="arpPlay">Arpeji çal</button></div></div></div>`;}
+  else h+=`<div class="actions" style="margin-top:12px"><button class="ghost" id="arpPlay">Arpeji çal</button></div>`;
+  h+=`<p class="hint">Pozisyon numaraları Gamlar sekmesindeki kutularla aynıdır; aynı bölgede gamı ve arpeji birlikte görürsün. Akor tipini değiştirince (örneğin 7 ya da m7) arpej de değişir.</p>`;
+  return h;
+}
+
+/* ---------- Tıngırdatma ---------- */
+const STRUMS=[
+ {n:'Dörtlük aşağı',spb:2,p:'D-D-D-D-',tip:'En temel kalıp. Her vuruşta bir aşağı; elini her "ve"de havada yukarı getir.'},
+ {n:'Sekizlik',spb:2,p:'DUDUDUDU',tip:'Vuruşlarda aşağı, "ve"lerde yukarı. El hiç durmadan sallanır.'},
+ {n:'Pop klasik',spb:2,p:'D-DU-UDU',tip:'Yüzlerce şarkının kalıbı. Boş yerlerde elin yine hareket eder ama tellere değmez.'},
+ {n:'Rock sekizlik',spb:2,p:'DDDDDDDD',tip:'Hepsi aşağı. Power chord ve palm mute ile rock riffinin temeli.'},
+ {n:'Reggae / ska',spb:2,p:'-U-U-U-U',tip:'Sadece "ve"lerde kısa yukarı vuruş; vuruştan hemen sonra teli sol elle sustur.'},
+ {n:'Country (bas–akor)',spb:2,p:'B-D-B-D-',tip:'Önce kökü bas tel olarak çal, sonra akoru; ikinci basta bir üst tele geç.'},
+ {n:'Funk 16\'lık',spb:4,p:'D-xU-UD-xU-UDUxU',tip:'×: sol el telleri hafifçe tutar, sağ el vurur; perküsif "çak" sesi. El 16\'lıklarla hiç durmadan sallanır.'},
+ {n:'6/8 balad',spb:3,p:'D-UD-U',tip:'İkişer üçlük grup. Her grubun başı vurgulu.'},
+ {n:'Vals 3/4',spb:2,p:'B-D-D-',tip:'Bir bas, iki akor: "bum-çak-çak".'},
+ {n:'Shuffle',spb:3,p:'D-UD-UD-UD-U',tip:'Üçlemenin 1. ve 3. vuruşu: uzun-kısa, sallanan his. Blues ile çok iyi gider.'}
+];
+const CNT={2:['1','&'],3:['1','&','a'],4:['1','e','&','a']};
+function strumAt(fr,t,dir,gain){
+  const off=Math.max(0,t-ctx.currentTime);const idx=fr.map((f,i)=>f>=0?i:-1).filter(i=>i>=0);
+  const seq=dir==='D'?idx:idx.slice(-4).reverse();
+  seq.forEach((i,k)=>pluck(TUNING[i]+fr[i],off+k*.011,gain));
+}
+function strumChord(){
+  if(st.sprog){const P=JAM[st.jam];return jamChord(P,(rt.sbar||0)%P.bars.length);}
+  return chord();
+}
+function strumSched(t){
+  const P=STRUMS[st.pat2];const sl=[...P.p];const n=sl.length;rt.step%=n;
+  const ch=strumChord();const v=voicings(ch)[0];
+  const k=rt.step;const c=sl[k];const beatStart=k%P.spb===0;
+  if(st.sclick&&beatStart)click(t,k===0?2:0);
+  if(v){
+    if(c==='D')strumAt(v.frets,t,'D',beatStart?.24:.17);
+    else if(c==='U')strumAt(v.frets,t,'U',.14);
+    else if(c==='x')noiseHit(t,.35,'bandpass',2200,.045,1.2);
+    else if(c==='B'){const pl=v.frets.map((f,i)=>f>=0?i:-1).filter(i=>i>=0);const ii=rt.bt&&pl.length>1?pl[1]:pl[0];pluck(TUNING[ii]+v.frets[ii],Math.max(0,t-ctx.currentTime),.32);rt.bt=!rt.bt;}
+  }
+  rt.queue.push({t,slot:k});
+  rt.next+=60/st.bpm/P.spb;rt.step=(rt.step+1)%n;
+  if(rt.step===0){rt.sbar=(rt.sbar||0)+1;if(st.sprog)rt.queue.push({t:rt.next,sbar:rt.sbar});}
+}
+function strumUI(c){
+  const P=STRUMS[st.pat2];const sl=[...P.p];const cnt=CNT[P.spb];
+  let h=`<div class="chips" style="margin-bottom:12px">${STRUMS.map((q,i)=>`<button data-pat2="${i}" aria-pressed="${st.pat2===i}">${q.n}</button>`).join('')}</div>`;
+  h+=`<section class="card" style="margin-top:0"><div class="cardhead"><div><h2 class="sub">${P.n}</h2><p class="who" id="strumChord">${st.sprog?`${nn(st.root)} tonunda ${JAM[st.jam].n}`:`Akor: ${c.sym}`}</p></div><button class="play" id="strumBtn">${rt.on==='strum'?'Durdur':PLAY_ICON+'Başlat'}</button></div>`;
+  h+=`<div class="slots" style="grid-template-columns:repeat(${Math.min(sl.length,8)},1fr)">${sl.map((ch,i)=>`<div class="slot${i%P.spb===0?' bt':''}" data-slot="${i}"><b>${ch==='D'?'↓':ch==='U'?'↑':ch==='x'?'×':ch==='B'?'B':''}</b><small>${i%P.spb===0?Math.floor(i/P.spb)+1:cnt[i%P.spb]}</small></div>`).join('')}</div>`;
+  h+=`<p class="fd" style="margin-top:10px">${P.tip}</p>`;
+  h+=`<div class="actions" style="margin-top:6px"><button class="ghost" data-bpm="-5">−5</button><span class="who" style="align-self:center"><b id="bpmVal">${st.bpm}</b> BPM</span><button class="ghost" data-bpm="5">+5</button></div>`;
+  h+=`<div class="chips" style="margin-top:10px"><button data-stog="sclick" aria-pressed="${st.sclick}">Metronom tıkı</button><button data-stog="sprog" aria-pressed="${st.sprog}">Eşlik ilerlemesiyle çal</button></div></section>`;
+  h+=`<p class="hint">↓ aşağı, ↑ yukarı, × susturulmuş vuruş, B bas tel. Altın kural: el bir sarkaç gibi hiç durmaz; vuruşlarda aşağı, "ve"lerde yukarı gider. Boş kutularda el yine hareket eder ama tellere değmez. Yavaş tempoda başla, kalıp oturunca hızlandır. "Eşlik ilerlemesiyle çal" açıkken akorlar Eşlik sekmesinde seçili ilerlemeye göre ölçü ölçü değişir.</p>`;
+  return h;
+}
+
+
+/* ---------- Menü ve akort uyarısı ---------- */
+const NAV=[
+ {g:'akor',n:'Akorlar',d:'Basış, bulma, şekiller',items:[['voicing','Basışlar'],['finder','Akor bul'],['shapes','Akor haritası'],['caged','CAGED'],['famous','Ünlü akorlar'],['sum','Özet']]},
+ {g:'teori',n:'Klavye ve teori',d:'Öğrenme bölümleri',items:[['neck','Sap'],['iv','Aralıklar'],['map','Klavye haritası'],['triad','Triadlar'],['gam','Gamlar'],['arp','Arpejler'],['cof','Beşli çember']]},
+ {g:'cal',n:'Çalış',d:'Eşlik, tıngırdatma, ritim',items:[['jam','Eşlik'],['strum','Tıngırdatma'],['ritim','Ritim ve metronom']]},
+ {g:'arac',n:'Araçlar ve bakım',d:'Tuner, kapo, gitar ayarı',items:[['tuner','Tuner'],['tun','Akort düzeni ve kapo'],['setup','Gitar ayarı']]}
+];
+const LOGO_SVG='<svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22.5" fill="#1A2229"/><path d="M22 12Q50 6 78 12Q94 14 88 28Q76 58 58 85Q50 97 42 85Q24 58 12 28Q6 14 22 12Z M60 34a10 10 0 1 0 -20 0a10 10 0 1 0 20 0Z" fill-rule="evenodd" fill="#D39A22" transform="translate(50 50) scale(0.66) translate(-50 -50)"/></svg>';
+const MENU_ICON='<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const WARN_ICON='<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5 18.5 17h-17z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 8v4.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="14.6" r="1.1" fill="currentColor"/></svg>';
+function navFind(id){for(const g of NAV)for(const [k,n] of g.items)if(k===id)return {g,n};return {g:NAV[0],n:NAV[0].items[0][1]};}
+function isAltTuning(){return st.tun!=='std'||st.capo>0;}
+function tuningNotes(){const T=TUNINGS.find(t=>t.id===st.tun);return T.m.map(m=>SIMPLE[m%12]).join(' ');}
+function shortTuning(){const T=TUNINGS.find(t=>t.id===st.tun);return (st.tun==='std'?'Standart':T.n)+(st.capo?`, kapo ${st.capo}`:'');}
+function tuningText(plain){
+  const T=TUNINGS.find(t=>t.id===st.tun);
+  const a=st.tun==='std'?(plain?'standart (E A D G B E)':'Akort düzeni standart (E A D G B E)'):(plain?`${T.n} (${tuningNotes()})`:`Akort düzenin <b>${T.n}</b> (${tuningNotes()})`);
+  const c=st.capo?(plain?`, kapo ${st.capo}. perde`:`, kapo <b>${st.capo}. perdede</b>`):(plain?'':', kapo yok');
+  return a+c+'.';
+}
+function navOpen(){
+  const g=navFind(st.tab).g.g;st.gopen=st.gopen||{};st.gopen[g]=true;
+  drawerRender();document.body.classList.add('dopen');
+  const dr=document.getElementById('drawer');dr.setAttribute('aria-hidden','false');
+  const c=dr.querySelector('[aria-current="page"]')||dr.querySelector('button');if(c)c.focus();
+}
+function navClose(){document.body.classList.remove('dopen');const dr=document.getElementById('drawer');dr.setAttribute('aria-hidden','true');const b=document.querySelector('.menubtn');if(b)b.focus();}
+function drawerRender(){
+  st.gopen=st.gopen||{};
+  const dr=document.getElementById('drawer');
+  dr.innerHTML=`<div class="dhead"><span class="dbrand">${LOGO_SVG}<b>mizrapp</b></span><button class="dclose" data-dclose="1" aria-label="Menüyü kapat">×</button></div><div class="dbody">${NAV.map(g=>`<div class="dgroup${st.gopen[g.g]?' open':''}"><button class="dgbtn" data-dg="${g.g}" aria-expanded="${!!st.gopen[g.g]}"><span>${g.n}<small>${g.d}</small></span><i aria-hidden="true">›</i></button><div class="ditems">${g.items.map(([id,n])=>`<button data-go="${id}"${st.tab===id?' aria-current="page"':''}>${n}</button>`).join('')}</div></div>`).join('')}</div>`;
+}
+function goTab(id){
+  st.tab=id;qzStop();if(id!=='tuner'&&tu.on)tuStop();render();
+  const t=document.getElementById('tabTop');if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+}
+/* Hatırlatma: rem = '3m' | '1h' | 'off' (bu düzen için) */
+function remLoad(){try{return JSON.parse(localStorage.getItem('tunRemind')||'{}')||{};}catch(e){return {};}}
+function remSave(o){try{localStorage.setItem('tunRemind',JSON.stringify(o));}catch(e){}}
+let remLast=0;
+function remKey(){return st.tun+'|'+st.capo;}
+function remDue(){
+  if(!isAltTuning())return false;
+  const o=remLoad();if(o.off===remKey())return false;
+  const iv=o.every==='1h'?3600000:180000;
+  return Date.now()-remLast>=iv;
+}
+function remShow(){
+  const o=remLoad();
+  const box=document.getElementById('rem');
+  box.innerHTML=`<h2 id="remT">Akort düzenini kontrol et</h2><p>${tuningText(false)} Gitarın bu şekilde akortlu değilse akorlar ve gamlar yanlış görünür.</p>
+  <div class="rbtns"><button class="prim" data-rem="ok">Tamam, böyle çalıyorum</button><button data-rem="reset">Standarda dön (E A D G B E, kapo yok)</button><button data-rem="3m"${o.every!=='1h'?' aria-pressed="true"':''}>3 dakikada bir hatırlat</button><button data-rem="1h"${o.every==='1h'?' aria-pressed="true"':''}>Saatte bir hatırlat</button><button data-rem="off">Bu düzen için bir daha hatırlatma</button></div>`;
+  document.getElementById('remBg').classList.add('on');remLast=Date.now();
+  const p=box.querySelector('.prim');if(p)p.focus();
+}
+function remHide(){document.getElementById('remBg').classList.remove('on');}
+function resetTuning(){st.tun='std';st.capo=0;applyTuning();}
+document.getElementById('drawer').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+  if(d.dclose){navClose();return;}
+  if(d.dg){st.gopen=st.gopen||{};st.gopen[d.dg]=!st.gopen[d.dg];drawerRender();const nb=document.querySelector(`[data-dg="${d.dg}"]`);if(nb)nb.focus();return;}
+  if(d.go){navClose();goTab(d.go);}
+});
+document.getElementById('drawerBg').addEventListener('click',navClose);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(document.body.classList.contains('dopen'))navClose();else if(document.getElementById('remBg').classList.contains('on'))remHide();}});
+document.getElementById('rem').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;const r=b.dataset.rem;const o=remLoad();
+  if(r==='3m'||r==='1h'){o.every=r;if(o.off===remKey())delete o.off;remSave(o);}
+  else if(r==='off'){o.off=remKey();remSave(o);}
+  else if(r==='reset'){resetTuning();}
+  remHide();render();
+});
+setInterval(()=>{if(remDue()&&!document.getElementById('remBg').classList.contains('on')&&!document.hidden)remShow();},15000);
+
+function playCurrent(){const c=chord();const vs=voicings(c);if(vs[0])strum(vs[0].frets);}
+
+document.getElementById('app').addEventListener('click',e=>{
+  if(e.target.closest('input,label'))return;
+  let b=e.target.closest('[data-midi]');const pb=e.target.closest('.shcell[data-play]');if(pb&&!b)b=pb;if(!b)b=e.target.closest('button,[data-box],[data-key],[data-fc],[data-ftop],tr[data-row]');if(!b)return;
+  const d=b.dataset;
+  if(d.root!==undefined){st.root=ROOTS[+d.root];st.vi=0;}
+  else if(d.type){st.type=d.type;st.vi=0;st.rs='all';}
+  else if(d.tab){st.tab=d.tab;if(d.tab!=='map')qzStop();if(d.tab!=='tuner'&&tu.on)tuStop();}
+  else if(d.mode){st.mode=d.mode;}
+  else if(d.rs){st.rs=d.rs;st.vi=0;}
+  else if(d.midi){pluck(+d.midi,0);return;}
+  else if(d.box){st.box=st.box===d.box&&d.box!=='off'&&d.box!=='all'?'all':d.box;}
+  else if(d.scale){st.scale=d.scale;}
+  else if(d.key){
+    const [kind,i]=d.key.split('|');const n=kind==='maj'?MAJ[+i]:MIN[+i];
+    st.key={...n,minor:kind==='min'};st.root={l:n.l,a:n.a};st.type=kind==='maj'?'maj':'m';st.vi=0;st.rs='all';
+    render();playCurrent();return;
+  }
+  else if(d.dia!==undefined){const x=window._dia[+d.dia];st.root=x.note;st.type=x.type;st.vi=0;st.rs='all';render();playCurrent();return;}
+  else if(d.row){st.type=d.row;st.vi=0;st.rs='all';st.tab='voicing';}
+  else if(d.cplay!==undefined){strum(window._shapes[+d.cplay].frets);return;}
+  else if(d.ivs!==undefined){const s=+d.ivs;const rm=48+pcOf(st.root);pluck(rm,0);pluck(rm+s,.55);pluck(rm,1.15);pluck(rm+s,1.15);return;}
+  else if(d.rstr!==undefined){st.rstr=+d.rstr;}
+  else if(d.ihl){st.ihl=d.ihl;}
+  else if(d.ms){st.ms=d.ms;if(d.ms!=='quiz')qzStop();}
+  else if(d.ntm){st.ntm=d.ntm;}
+  else if(d.refp){st.refp=+d.refp;}
+  else if(d.tq){st.tq=d.tq;}
+  else if(d.tset!==undefined){st.tset=+d.tset;}
+  else if(d.fx){st.fx=Math.max(0,Math.min(12,st.fx+(+d.fx)));}
+  else if(d.pk!==undefined){st.pk=+d.pk;}
+  else if(d.octm){st.octm=d.octm;}
+  else if(d.qm){st.qz.m=d.qm;st.qz.show=false;}
+  else if(d.play){d.play.split(',').forEach((m,k)=>pluck(+m,k*.06));return;}
+  else if(d.gotab){st.tab=d.gotab;if(d.gotab!=='tuner'&&tu.on)tuStop();window.scrollTo(0,0);}
+  else if(b.id==='qShow'){st.qz.show=!st.qz.show;}
+  else if(b.id==='qNext'){qzNext();}
+  else if(b.id==='qAuto'){if(st.qz.auto)qzStop();else{qzStart();return;}}
+  else if(d.fplay!==undefined){strum(FAMOUS[+d.fplay].fr);return;}
+  else if(d.fsel!==undefined){
+    const F=FAMOUS[+d.fsel];st.root={...F.root};st.type=F.type;st.rs='all';st.tab='voicing';
+    const list=voicings(chord());const key=F.fr.join(',');
+    let idx=list.findIndex(x=>x.frets.join(',')===key);
+    if(idx<0){list.unshift(pinV(F.fr));idx=0;}
+    st.vi=idx;window.scrollTo(0,0);
+  }
+  else if(d.jam!==undefined){st.jam=+d.jam;st.jscale=JAM[st.jam].sc;st.jbar=0;rt.step=0;rt.jb=0;}
+  else if(d.jscale){st.jscale=d.jscale;}
+  else if(d.jtog){st[d.jtog]=!st[d.jtog];}
+  else if(d.jbpm){setBpm(JAM[st.jam].bpm);return;}
+  else if(b.id==='jamBtn'){if(rt.on==='jam')stopRt();else startRt('jam');return;}
+  else if(d.tmode){st.tmode=d.tmode;}
+  else if(d.a4){st.a4=Math.max(430,Math.min(450,st.a4+(+d.a4)));const el=document.getElementById('tuA4');if(el)el.textContent=st.a4;return;}
+  else if(d.tsave!==undefined&&tu.cur){const i=+d.tsave;st.su['in_'+i]=tu.cur.cents.toFixed(1);saveSu();b.textContent='Kaydedildi';return;}
+  else if(d.tref!==undefined){const m=BASE[+d.tref];const f=440*Math.pow(2,(m-69)/12)*st.a4/440;refTone(f,m);return;}
+  else if(b.id==='tuBtn'){if(tu.on){tuStop();}else{tuStart();return;}}
+  else if(d.ss){st.ss=d.ss;}
+  else if(d.rad){st.rad=d.rad;}
+  else if(d.scl){st.scl=+d.scl;}
+  else if(d.put){const [k,t]=d.put.split('|');st.pu[k]=t;}
+  else if(b.id==='logSave'){const log=loadLog();const n=(document.getElementById('su-note')||{}).value||'';const dt=new Date();log.push({d:dt.toLocaleDateString('tr-TR'),v:{...st.su},n});saveLog(log.slice(-30));}
+  else if(b.id==='logClear'){saveLog([]);}
+  else if(d.quick){goTab(d.quick);return;}
+  else if(d.drawer){navOpen();return;}
+  else if(d.resettun){resetTuning();}
+  else if(d.fc){const [i,f]=d.fc.split('|').map(Number);st.fd[i]=st.fd[i]===f?-1:f;if(st.fd[i]>=0)pluck(TUNING[i]+f,0);}
+  else if(d.ftop!==undefined){const i=+d.ftop;const f=st.fd[i];st.fd[i]=f>0?-1:f===-1?0:-1;if(st.fd[i]===0)pluck(TUNING[i],0);}
+  else if(d.fs){st.fs=Math.max(1,Math.min(18,st.fs+(+d.fs)));}
+  else if(b.id==='fClear'){st.fd=[-1,-1,-1,-1,-1,-1];}
+  else if(b.id==='fPlay'){strum(st.fd);return;}
+  else if(b.id==='fSel'){const id=identify(st.fd);const x=id.res[0];if(x){st.root={...ROOTS[x.r]};st.type=x.T.id;st.rs='all';st.tab='voicing';const list=voicings(chord());const key=st.fd.join(',');let ix=list.findIndex(v=>v.frets.join(',')===key);if(ix<0&&x.r===id.bass){list.unshift(pinV([...st.fd]));ix=0;}st.vi=Math.max(0,ix);window.scrollTo(0,0);}}
+  else if(d.themeNext){const i=THEMES.findIndex(x=>x[0]===st.theme);st.theme=THEMES[(i+1)%THEMES.length][0];applyTheme();}
+  else if(d.shm){st.shm=d.shm;}
+  else if(d.tun){st.tun=d.tun;applyTuning();remLast=Date.now();}
+  else if(d.capo){st.capo=Math.max(0,Math.min(9,st.capo+(+d.capo)));applyTuning();remLast=Date.now();}
+  else if(d.remset){const o=remLoad();if(d.remset==='off')o.off=remKey();else{o.every=d.remset;if(o.off===remKey())delete o.off;}remSave(o);}
+  else if(d.abox){st.abox=d.abox;}
+  else if(b.id==='arpPlay'){const ps=window._arps||[];const b0=st.abox&&st.abox!=='all'?ps.find(x=>x.num===+st.abox):ps.find(x=>x.minF<=5)||ps[0];if(b0)playRun(b0.notes.map(n=>n.p));return;}
+  else if(d.pat2!==undefined){st.pat2=+d.pat2;rt.step=0;}
+  else if(d.stog){st[d.stog]=!st[d.stog];}
+  else if(b.id==='strumBtn'){if(rt.on==='strum')stopRt();else startRt('strum');return;}
+  else if(d.vnav){st.vi=Math.max(0,st.vi+(+d.vnav));}
+  else if(d.bpm){setBpm(st.bpm+(+d.bpm));return;}
+  else if(d.sig){st.sig=d.sig;rt.step=0;}
+  else if(d.sub){st.sub=+d.sub;rt.step=0;}
+  else if(d.pat!==undefined){st.pat=+d.pat;rt.step=0;}
+  else if(b.id==='metBtn'){if(rt.on==='met')stopRt();else startRt('met');return;}
+  else if(b.id==='drumBtn'){if(rt.on==='drum')stopRt();else startRt('drum');return;}
+  else if(b.id==='stopRt'){stopRt();return;}
+  else if(b.id==='tap'){
+    const now=performance.now();if(rt.taps.length&&now-rt.taps[rt.taps.length-1]>2000)rt.taps=[];
+    rt.taps.push(now);rt.taps=rt.taps.slice(-5);
+    if(rt.taps.length>=2){const iv=(rt.taps[rt.taps.length-1]-rt.taps[0])/(rt.taps.length-1);setBpm(60000/iv);}
+    return;
+  }
+  else if(b.id==='prev'){st.vi=Math.max(0,st.vi-1);}
+  else if(b.id==='next'){st.vi++;}
+  else if(b.id==='playBtn'){if(window._v)strum(window._v.frets);return;}
+  else if(b.id==='boxPlay'){const bx=window._boxes.find(x=>x.num===+st.box);playRun(bx.notes.map(n=>n.p));return;}
+  else if(b.id==='scalePlay'){const bx=window._boxes.find(x=>x.num===1);playRun(bx.notes.map(n=>n.p));return;}
+  else if(b.id==='relScale'){const R=SCALES[st.scale].rel;st.root=spell(st.root,R[1],R[2]);st.scale=R[0];}
+  else if(b.id==='keyPenta'){st.root={l:st.key.l,a:st.key.a};st.scale=st.key.minor?'minp':'majp';st.tab='gam';st.box='all';}
+  else return;
+  render();
+});
+applyTuning();
+applyTheme();
+render();
+if(isAltTuning()&&remLoad().off!==remKey())setTimeout(remShow,600);
+</script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
+</body>
+</html>
