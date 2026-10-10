@@ -1,5 +1,5 @@
 /* Mizrapp çevrimdışı çalışma dosyası */
-const CACHE = 'mizrapp-0.2.1';
+const CACHE = 'mizrapp-0.3.0';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
