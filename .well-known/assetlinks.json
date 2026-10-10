@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.mizrapp.app",
+      "sha256_cert_fingerprints": [
+        "E6:ED:11:F3:4C:18:D8:8E:8F:43:B2:1A:AA:C7:01:B1:39:DD:3C:86:38:C6:77:80:48:C5:68:75:6B:27:03:D0"
+      ]
+    }
+  }
+]
