@@ -1,6 +1,7 @@
 /* Mizrapp çevrimdışı çalışma dosyası */
-const CACHE = 'mizrapp-0.5.2';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png'];
+const CACHE = 'mizrapp-0.5.3';
+const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png', './gizlilik.html',
+  './atkinson-hyperlegible-latin-400-normal.woff2', './atkinson-hyperlegible-latin-700-normal.woff2', './atkinson-hyperlegible-latin-ext-400-normal.woff2', './atkinson-hyperlegible-latin-ext-700-normal.woff2', './bricolage-grotesque-latin-500-normal.woff2', './bricolage-grotesque-latin-700-normal.woff2', './bricolage-grotesque-latin-800-normal.woff2', './bricolage-grotesque-latin-ext-500-normal.woff2', './bricolage-grotesque-latin-ext-700-normal.woff2', './bricolage-grotesque-latin-ext-800-normal.woff2'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));

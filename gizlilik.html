@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mizrapp Gizlilik Politikası</title>
+<meta name="description" content="Mizrapp gizlilik politikası: kişisel veri toplanmaz, mikrofon yalnızca cihaz içinde kullanılır.">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-display:swap;font-weight:500;src:url(bricolage-grotesque-latin-ext-500-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-display:swap;font-weight:500;src:url(bricolage-grotesque-latin-500-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-display:swap;font-weight:700;src:url(bricolage-grotesque-latin-ext-700-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-display:swap;font-weight:700;src:url(bricolage-grotesque-latin-700-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-display:swap;font-weight:800;src:url(bricolage-grotesque-latin-ext-800-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-display:swap;font-weight:800;src:url(bricolage-grotesque-latin-800-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Atkinson Hyperlegible';font-style:normal;font-display:swap;font-weight:400;src:url(atkinson-hyperlegible-latin-ext-400-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Atkinson Hyperlegible';font-style:normal;font-display:swap;font-weight:400;src:url(atkinson-hyperlegible-latin-400-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Atkinson Hyperlegible';font-style:normal;font-display:swap;font-weight:700;src:url(atkinson-hyperlegible-latin-ext-700-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Atkinson Hyperlegible';font-style:normal;font-display:swap;font-weight:700;src:url(atkinson-hyperlegible-latin-700-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+:root{--bg:#EEF1F2;--surface:#fff;--ink:#1A2229;--muted:#5B6870;--line:#D3DADE;--brass:#D39A22}
+@media (prefers-color-scheme:dark){:root{--bg:#12171B;--surface:#1A2127;--ink:#E5EAED;--muted:#93A0A8;--line:#2B353C}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',system-ui,sans-serif;font-size:16px;line-height:1.6}
+.wrap{max-width:720px;margin:0 auto;padding:24px 16px 56px}
+header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+header svg{width:44px;height:44px;flex-shrink:0}
+header b{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:26px;letter-spacing:-.03em}
+h1{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:30px;line-height:1.15;margin:0 0 4px}
+h2{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:20px;margin:28px 0 6px}
+.date{color:var(--muted);margin:0 0 20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:16px 0}
+.card p{margin:0}
+ul{padding-left:22px}
+li{margin:4px 0}
+a{color:inherit}
+hr{border:0;border-top:1px solid var(--line);margin:40px 0 24px}
+.en{color:var(--muted)}
+.en h2,.en h1{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22.5" fill="#1A2229"/><path d="M22 12Q50 6 78 12Q94 14 88 28Q76 58 58 85Q50 97 42 85Q24 58 12 28Q6 14 22 12Z M60 34a10 10 0 1 0 -20 0a10 10 0 1 0 20 0Z" fill-rule="evenodd" fill="#D39A22" transform="translate(50 50) scale(0.66) translate(-50 -50)"/></svg><b>mizrapp</b></header>
+
+<h1>Gizlilik politikası</h1>
+<p class="date">Yürürlük tarihi: 11 Ekim 2026</p>
+
+<div class="card"><p><b>Özet:</b> Mizrapp kişisel veri toplamaz, hesap açtırmaz, reklam ve analiz aracı kullanmaz. Mikrofon yalnızca senin açtığın bölümlerde, cihazının içinde kullanılır; ses hiçbir yere gönderilmez.</p></div>
+
+<h2>Bu politika neyi kapsar?</h2>
+<p>Bu metin, Burak Akovalı tarafından geliştirilen Mizrapp gitar çalışma uygulamasını kapsar: Google Play'deki Android uygulaması ve mizrapp.com adresindeki web sürümü.</p>
+
+<h2>Topladığımız veriler</h2>
+<p>Hiçbir kişisel veri toplamıyoruz. Uygulamada kullanıcı hesabı, kayıt, reklam, çerezle takip ya da kullanım analizi yoktur. Uygulama bir sunucuya senin hakkında bilgi göndermez.</p>
+
+<h2>Cihazında saklanan ayarlar</h2>
+<p>Tema, akort düzeni, gitar tipi, ayar ölçümlerin, ayar günlüğün ve kaldığın bölüm gibi tercihler yalnızca cihazının tarayıcı depolamasında tutulur. Bu bilgiler cihazından çıkmaz. Uygulamanın verilerini silerek ya da uygulamayı kaldırarak hepsini silebilirsin.</p>
+
+<h2>Mikrofon</h2>
+<p>Mikrofon izni yalnızca şu bölümlerde, sen açtığında istenir:</p>
+<ul>
+<li><b>Tuner:</b> çaldığın notanın perdesini bulmak için.</li>
+<li><b>Looper:</b> çaldığın parçayı döngü olarak tekrar çalmak için.</li>
+<li><b>Efekt laboratuvarı, canlı giriş:</b> gitar sesini pedal simülasyonlarından geçirmek için.</li>
+</ul>
+<p>Ses cihazının içinde, o anda işlenir. Tuner ve efekt laboratuvarı sesi hiç saklamaz. Looper'daki döngü yalnızca uygulama açıkken bellekte durur; dosyaya kaydedilmez ve sildiğinde ya da uygulamayı kapattığında kaybolur. Ses hiçbir zaman internete, bize ya da üçüncü kişilere gönderilmez. Mikrofon iznini istediğin zaman telefonunun ayarlarından geri alabilirsin.</p>
+
+<h2>Üçüncü taraf hizmetler</h2>
+<p>Uygulama dosyaları GitHub Pages üzerinden sunulur. Her web sitesinde olduğu gibi, dosyalar indirilirken barındırma hizmeti teknik nedenlerle IP adresi gibi standart bağlantı bilgilerini işleyebilir; bu bilgilere biz erişmeyiz. Ayrıntılar için GitHub'ın gizlilik bildirimine bakabilirsin. Yazı tipleri uygulamanın içinde gelir, harici bir yazı tipi hizmetinden yüklenmez.</p>
+
+<h2>Çocuklar</h2>
+<p>Mizrapp genel kitleye yönelik bir müzik çalışma aracıdır ve özellikle 13 yaşından küçük çocuklara yönelik değildir. Hiçbir kullanıcıdan, çocuklar dahil, kişisel veri toplamayız.</p>
+
+<h2>Değişiklikler</h2>
+<p>Bu politika değişirse güncel hali bu sayfada, yeni yürürlük tarihiyle yayımlanır.</p>
+
+<h2>İletişim</h2>
+<p>Sorularını <a href="mailto:info@mizrapp.com">info@mizrapp.com</a> adresine yazabilirsin.</p>
+
+<hr>
+<div class="en" lang="en">
+<h1>Privacy policy (English)</h1>
+<p class="date">Effective date: 11 October 2026</p>
+<p><b>Summary:</b> Mizrapp, a guitar practice app by Burak Akovalı, does not collect any personal data. There are no accounts, ads, tracking cookies or analytics.</p>
+<h2>Settings on your device</h2>
+<p>Preferences such as theme, tuning, guitar type, setup measurements and the last open section are stored only in your device's browser storage and never leave your device.</p>
+<h2>Microphone</h2>
+<p>The microphone is used only when you turn on the Tuner, the Looper or the live input of the Effects lab. Audio is processed on your device in real time and is never uploaded or shared. The tuner and effects do not store audio; the looper keeps the loop in memory only while the app is open and never saves it to a file. You can revoke microphone permission at any time in your phone's settings.</p>
+<h2>Third parties</h2>
+<p>The app files are served by GitHub Pages, which may process standard connection data such as IP addresses for technical reasons; we have no access to it. Fonts are bundled with the app.</p>
+<h2>Children</h2>
+<p>Mizrapp is a general-audience music tool and is not directed at children under 13. We do not collect personal data from anyone.</p>
+<h2>Contact</h2>
+<p><a href="mailto:info@mizrapp.com">info@mizrapp.com</a></p>
+</div>
+</div>
+</body>
+</html>
