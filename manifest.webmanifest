@@ -1,7 +1,7 @@
 {
   "name": "Mizrapp",
   "short_name": "Mizrapp",
-  "description": "Gitar akorları, gamlar, klavye haritası, eşlik, tuner, looper ve efekt laboratuvarı.",
+  "description": "Gitar akorları, gamlar, armoni, klavye haritası, eşlik, tuner, looper, dinle ve efekt laboratuvarı.",
   "lang": "tr",
   "start_url": "./",
   "scope": "./",
@@ -40,5 +40,43 @@
     "music",
     "education"
   ],
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Tuner",
+      "short_name": "Tuner",
+      "url": "./?tab=tuner",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Looper",
+      "short_name": "Looper",
+      "url": "./?tab=looper",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Dinle",
+      "short_name": "Dinle",
+      "url": "./?tab=dinle",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
 }
