@@ -1,5 +1,5 @@
 /* Mizrapp çevrimdışı çalışma dosyası */
-const CACHE = 'mizrapp-0.14.0';
+const CACHE = 'mizrapp-0.15.0';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png', './gizlilik.html',
   './atkinson-hyperlegible-latin-400-normal.woff2', './atkinson-hyperlegible-latin-700-normal.woff2', './atkinson-hyperlegible-latin-ext-400-normal.woff2', './atkinson-hyperlegible-latin-ext-700-normal.woff2', './bricolage-grotesque-latin-500-normal.woff2', './bricolage-grotesque-latin-700-normal.woff2', './bricolage-grotesque-latin-800-normal.woff2', './bricolage-grotesque-latin-ext-500-normal.woff2', './bricolage-grotesque-latin-ext-700-normal.woff2', './bricolage-grotesque-latin-ext-800-normal.woff2'];
 
